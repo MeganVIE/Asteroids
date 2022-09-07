@@ -56,7 +56,11 @@
     <Analyzer Include="C:\Program Files (x86)\Microsoft Visual Studio Tools for Unity\16.0\Analyzers\Microsoft.Unity.Analyzers.dll" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Assets\Scripts\ShipModel.cs" />
+    <Compile Include="Assets\Scripts\ShipController.cs" />
+    <Compile Include="Assets\Scripts\ShipView.cs" />
     <Compile Include="Assets\Scripts\InputSystem.cs" />
+    <Compile Include="Assets\Scripts\GameRoot.cs" />
   </ItemGroup>
   <ItemGroup>
     <Reference Include="UnityEngine">
