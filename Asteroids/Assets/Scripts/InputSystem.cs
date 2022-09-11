@@ -10,8 +10,8 @@ public interface IMoveRotateInputData
 
 public interface IWeaponUseInputData
 {
-    UnityEvent onGunUse { get; set; }
-    UnityEvent onLaserUse { get; set; }
+    UnityEvent onGunUse { get;}
+    UnityEvent onLaserUse { get;}
 }
 
 public class InputSystem : MonoBehaviour, IMoveRotateInputData, IWeaponUseInputData
@@ -35,30 +35,35 @@ public class InputSystem : MonoBehaviour, IMoveRotateInputData, IWeaponUseInputD
     float IMoveRotateInputData.RotationValue => _rotate.action.ReadValue<float>();
     InputActionPhase IMoveRotateInputData.MoveForwardPhase => _moveForward.action.phase;
 
-    public UnityEvent onGunUse { get; set; }
-    public UnityEvent onLaserUse { get; set; }
+    private UnityEvent _onGunUse;
+    private UnityEvent _onLaserUse;
+
+    public UnityEvent onGunUse => _onGunUse;
+    public UnityEvent onLaserUse => _onLaserUse;
 
     private void Start()
     {
         _gunUse.action.performed += GunUsePerformed;
         _laserUse.action.performed += LaserUsePerformed;
+        _onGunUse = new UnityEvent();
+        _onLaserUse = new UnityEvent();
     }
 
     private void OnDestroy()
     {
         _gunUse.action.performed -= GunUsePerformed;
         _laserUse.action.performed -= LaserUsePerformed;
-        onGunUse?.RemoveAllListeners();
-        onLaserUse?.RemoveAllListeners();
+        _onGunUse?.RemoveAllListeners();
+        _onLaserUse?.RemoveAllListeners();
     }
 
     private void LaserUsePerformed(InputAction.CallbackContext obj)
     {
-        onLaserUse?.Invoke();
+        _onLaserUse?.Invoke();
     }
 
     private void GunUsePerformed(InputAction.CallbackContext obj)
     {
-        onGunUse?.Invoke();
+        _onGunUse?.Invoke();
     }
 }

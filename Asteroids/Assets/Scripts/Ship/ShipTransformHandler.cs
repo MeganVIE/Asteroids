@@ -23,19 +23,19 @@ namespace Ship
             _acceleration -= _acceleration * (deltaTime / _shipConfigData.SlowdownSpeed);
         }
 
-        public void ChangeRotation(ShipModel model, float angleDirection, float deltaTime)
+        public void ChangeRotation(ModelTransform modelTransform, float angleDirection, float deltaTime)
         {
-            var newRotation = Mathf.Repeat(model.Rotation + angleDirection * deltaTime * _shipConfigData.RotationSpeed, 360);
-            model.ChangeRotation(newRotation);
+            var newRotation = Mathf.Repeat(modelTransform.Rotation + angleDirection * deltaTime * _shipConfigData.RotationSpeed, 360);
+            modelTransform.ChangeRotation(newRotation);
         }
 
-        public void ChangePosition(ShipModel model)
+        public void ChangePosition(ModelTransform modelTransform)
         {
-            var newPosition = model.Position + _acceleration;
+            var newPosition = modelTransform.Position + _acceleration;
             newPosition.x = Mathf.Repeat(newPosition.x, 1);
             newPosition.y = Mathf.Repeat(newPosition.y, 1);
 
-            model.ChangePosition(newPosition);
+            modelTransform.ChangePosition(newPosition);
         }
     }
 }

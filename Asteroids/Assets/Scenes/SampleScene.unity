@@ -372,6 +372,7 @@ MonoBehaviour:
   _inputSystem: {fileID: 996533649}
   _shipView: {fileID: 1568473720}
   _shipConfigData: {fileID: 11400000, guid: 87d1d69d997c324418560adc7d3ec80e, type: 2}
+  _weaponConfig: {fileID: 11400000, guid: 9c0d2378ca55e4242b3133a2fe51d173, type: 2}
 --- !u!4 &1899571409
 Transform:
   m_ObjectHideFlags: 0
@@ -430,7 +431,7 @@ GameObject:
   - component: {fileID: 2112015627}
   - component: {fileID: 2112015628}
   m_Layer: 6
-  m_Name: Square
+  m_Name: sprite
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
