@@ -2,7 +2,19 @@ using UnityEngine;
 using UnityEngine.Events;
 using UnityEngine.InputSystem;
 
-public class InputSystem : MonoBehaviour
+public interface IMoveRotateInputData
+{
+    float RotationValue { get;}
+    InputActionPhase MoveForwardPhase { get;}
+}
+
+public interface IWeaponUseInputData
+{
+    UnityEvent onGunUse { get; set; }
+    UnityEvent onLaserUse { get; set; }
+}
+
+public class InputSystem : MonoBehaviour, IMoveRotateInputData, IWeaponUseInputData
 {
     #region Activation
     [SerializeField] private InputActionAsset _actionAsset;    
@@ -20,11 +32,11 @@ public class InputSystem : MonoBehaviour
     [SerializeField] private InputActionReference _gunUse;
     [SerializeField] private InputActionReference _laserUse;
 
-    public float RotationValue => _rotate.action.ReadValue<float>();
-    public InputActionPhase MoveForwardPhase => _moveForward.action.phase;
+    float IMoveRotateInputData.RotationValue => _rotate.action.ReadValue<float>();
+    InputActionPhase IMoveRotateInputData.MoveForwardPhase => _moveForward.action.phase;
 
-    public UnityEvent onGunUse;
-    public UnityEvent onLaserUse;
+    public UnityEvent onGunUse { get; set; }
+    public UnityEvent onLaserUse { get; set; }
 
     private void Start()
     {
@@ -36,8 +48,8 @@ public class InputSystem : MonoBehaviour
     {
         _gunUse.action.performed -= GunUsePerformed;
         _laserUse.action.performed -= LaserUsePerformed;
-        onGunUse.RemoveAllListeners();
-        onLaserUse.RemoveAllListeners();
+        onGunUse?.RemoveAllListeners();
+        onLaserUse?.RemoveAllListeners();
     }
 
     private void LaserUsePerformed(InputAction.CallbackContext obj)

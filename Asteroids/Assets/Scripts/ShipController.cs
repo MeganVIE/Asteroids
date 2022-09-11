@@ -1,34 +1,40 @@
 using UnityEngine;
 
-public class ShipController
+namespace Ship
 {
-    private InputSystem _inputSystem;
-
-    private ShipModel _model;
-    private ShipView _view;
-
-    private Vector2 _startPosition = new Vector2(.5f, .5f);
-
-    public ShipController(ShipView view, InputSystem inputs)
+    public class ShipController
     {
-        _model = new ShipModel(_startPosition);
-        _view = view;
-        _view.SetModel(_model);
+        private IMoveRotateInputData _inputSystem;
 
-        _inputSystem = inputs;
-    }
+        private ShipModel _model;
+        private ShipView _view;
+        private ShipTransformHandler _shipTransformHandler;
 
-    public void Update()
-    {
-        if (_inputSystem.MoveForwardPhase == UnityEngine.InputSystem.InputActionPhase.Performed)
-            _model.IncreaseAcceleration(Time.deltaTime);
-        else
-            _model.DecreaseAcceleration(Time.deltaTime);
+        public ShipController(ShipConfig shipConfigData, ShipView view, IMoveRotateInputData inputs)
+        {
+            _shipTransformHandler = new ShipTransformHandler(shipConfigData);
+            _inputSystem = inputs;
 
-        _model.ChangePosition();
-        _view.UpdatePosition();
+            _model = new ShipModel(shipConfigData.StartPosition);
+            _view = view;
+            _view.SetModel(_model);            
+        }
 
-        _model.ChangeRotation(_inputSystem.RotationValue, Time.deltaTime);
-        _view.UpdateRotation();
+        public void Update()
+        {
+            if (_inputSystem.MoveForwardPhase == UnityEngine.InputSystem.InputActionPhase.Performed)
+                _shipTransformHandler.IncreaseAcceleration(_model.Rotation, Time.deltaTime);
+            else
+                _shipTransformHandler.DecreaseAcceleration(Time.deltaTime);
+
+            _shipTransformHandler.ChangePosition(_model);
+            _view.UpdatePosition();
+
+            if (_inputSystem.RotationValue == 0)
+                return;
+
+            _shipTransformHandler.ChangeRotation(_model, _inputSystem.RotationValue, Time.deltaTime);            
+            _view.UpdateRotation();
+        }
     }
 }

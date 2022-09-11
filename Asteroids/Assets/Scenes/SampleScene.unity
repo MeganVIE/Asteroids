@@ -241,12 +241,6 @@ MonoBehaviour:
   _rotate: {fileID: 6966898303472436213, guid: ea2088da09e3fce41ba0d2c03f572d3f, type: 3}
   _gunUse: {fileID: 5999530811563897647, guid: ea2088da09e3fce41ba0d2c03f572d3f, type: 3}
   _laserUse: {fileID: -1096931982131733233, guid: ea2088da09e3fce41ba0d2c03f572d3f, type: 3}
-  onGunUse:
-    m_PersistentCalls:
-      m_Calls: []
-  onLaserUse:
-    m_PersistentCalls:
-      m_Calls: []
 --- !u!4 &996533650
 Transform:
   m_ObjectHideFlags: 0
@@ -377,6 +371,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   _inputSystem: {fileID: 996533649}
   _shipView: {fileID: 1568473720}
+  _shipConfigData: {fileID: 11400000, guid: 87d1d69d997c324418560adc7d3ec80e, type: 2}
 --- !u!4 &1899571409
 Transform:
   m_ObjectHideFlags: 0
