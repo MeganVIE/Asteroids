@@ -2,34 +2,11 @@ using UnityEngine;
 
 namespace Ship
 {
-    public class ShipView : MonoBehaviour
+    public class ShipView : View
     {
-        private ModelTransform _modelTransform;
-
-        private Transform _transform;
-        private Camera _camera;
-
-        private Vector3 _cameraOffset = Vector3.forward;
-
-        private void Start()
+        public void ChangeRotation(float newRotation)
         {
-            _transform = transform;
-            _camera = Camera.main;
-        }
-
-        public void SetModelTransform(ModelTransform modelTransform)
-        {
-            _modelTransform = modelTransform;
-            UpdatePosition();
-        }
-
-        public void UpdatePosition()
-        {
-            _transform.position = _camera.ViewportToWorldPoint((Vector3)_modelTransform.Position + _cameraOffset);
-        }
-        public void UpdateRotation()
-        {
-            _transform.rotation = Quaternion.Euler(0, 0, _modelTransform.Rotation);
+            _transform.rotation = Quaternion.Euler(0, 0, newRotation);
         }
     }
 }

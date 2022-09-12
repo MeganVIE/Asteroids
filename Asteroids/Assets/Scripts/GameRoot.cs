@@ -3,6 +3,7 @@ using UnityEngine;
 
 using Ship;
 using Weapon;
+using Enemies;
 
 public class GameRoot : MonoBehaviour
 {
@@ -11,6 +12,8 @@ public class GameRoot : MonoBehaviour
     [SerializeField] private ShipView _shipView;
     [SerializeField] private ShipConfig _shipConfigData;
     [SerializeField] private WeaponConfig _weaponConfig;
+    [Space]
+    [SerializeField] private AsteroidConfig _asteroidConfig;
 
     private WeaponHandler _weaponhandler;
 
@@ -32,8 +35,9 @@ public class GameRoot : MonoBehaviour
         var shipController = new ShipController(_shipConfigData, _shipView, _inputSystem);
         var bulletController = new BulletController(_weaponConfig, shipController.GetShipTransform());
         _weaponhandler = new WeaponHandler(bulletController, _inputSystem);
+        var asteroidController = new AsteroidController(_asteroidConfig);
 
-        _controllers = new List<IController> { shipController, bulletController };
+        _controllers = new List<IController> { shipController, bulletController, asteroidController };
     }
 
     private void Update()

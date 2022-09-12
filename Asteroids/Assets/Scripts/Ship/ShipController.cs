@@ -16,8 +16,7 @@ namespace Ship
             _inputSystem = inputs;
 
             _model = new ShipModel(shipConfigData.StartPosition);
-            _view = view;
-            _view.SetModelTransform(_model.modelTransform);            
+            _view = view;      
         }
 
         void IController.Update()
@@ -42,13 +41,13 @@ namespace Ship
         private void UpdatePosition()
         {
             _shipTransformHandler.ChangePosition(_model.modelTransform);
-            _view.UpdatePosition();
+            _view.ChangePosition(_model.modelTransform.Position);
         }
 
         private void UpdateRotation()
         {
             _shipTransformHandler.ChangeRotation(_model.modelTransform, _inputSystem.RotationValue, Time.deltaTime);
-            _view.UpdateRotation();
+            _view.ChangeRotation(_model.modelTransform.Rotation);
         }
     }
 }

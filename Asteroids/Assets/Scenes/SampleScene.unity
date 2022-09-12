@@ -268,7 +268,7 @@ GameObject:
   - component: {fileID: 1568473720}
   - component: {fileID: 1568473723}
   - component: {fileID: 1568473722}
-  m_Layer: 6
+  m_Layer: 0
   m_Name: ShipView
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -373,6 +373,7 @@ MonoBehaviour:
   _shipView: {fileID: 1568473720}
   _shipConfigData: {fileID: 11400000, guid: 87d1d69d997c324418560adc7d3ec80e, type: 2}
   _weaponConfig: {fileID: 11400000, guid: 9c0d2378ca55e4242b3133a2fe51d173, type: 2}
+  _asteroidConfig: {fileID: 11400000, guid: 414467011255e1f44a51d7bc11fb01e4, type: 2}
 --- !u!4 &1899571409
 Transform:
   m_ObjectHideFlags: 0
@@ -397,7 +398,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 1906905951}
-  m_Layer: 6
+  m_Layer: 0
   m_Name: Model
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -430,7 +431,7 @@ GameObject:
   m_Component:
   - component: {fileID: 2112015627}
   - component: {fileID: 2112015628}
-  m_Layer: 6
+  m_Layer: 0
   m_Name: sprite
   m_TagString: Untagged
   m_Icon: {fileID: 0}

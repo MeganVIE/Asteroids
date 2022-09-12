@@ -8,14 +8,14 @@ namespace Weapon
     {
         private ModelTransform _shipModelTransform;
         private WeaponConfig _weaponConfig;
-        private BulletObjectPool _bulletObjectPool;
+        private ObjectPool<BulletModel, BulletView> _bulletObjectPool;
         private Dictionary<BulletModel, BulletView> _bullets;
 
         public BulletController(WeaponConfig weaponConfig, ModelTransform shipModelTransform)
         {
             _shipModelTransform = shipModelTransform;
             _weaponConfig = weaponConfig;
-            _bulletObjectPool = new BulletObjectPool(_weaponConfig.BulletViewPrefab);
+            _bulletObjectPool = new ObjectPool<BulletModel, BulletView>(_weaponConfig.BulletViewPrefab);
             _bullets = new Dictionary<BulletModel, BulletView>();
         }        
 
@@ -38,7 +38,7 @@ namespace Weapon
         {
             var direction = Quaternion.Euler(0, 0, _shipModelTransform.Rotation) * Vector3.up;
 
-            _bulletObjectPool.GetBullet(out BulletModel model, out BulletView view);
+            _bulletObjectPool.GetObject(out BulletModel model, out BulletView view);
             model.ChangePosition(_shipModelTransform.Position);
             model.ChangeDirection(direction);
             view.ChangePosition(model.Position);
@@ -59,7 +59,7 @@ namespace Weapon
 
         private void DeactivateBullet(BulletModel model)
         {
-            _bulletObjectPool.DeactivateBullet(model, _bullets[model]);
+            _bulletObjectPool.DeactivateObject(model, _bullets[model]);
             _bullets.Remove(model);
         }
     }
