@@ -12,3 +12,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: f60531c6b61297d40bd009eacb479107, type: 3}
   m_Name: ShipConfig
   m_EditorClassIdentifier: 
+  CollisionRadius: 0.3
+  MaxSpeed: 0.001
+  AccelerationSpeed: 0.0005
+  SlowdownSpeed: 1
+  RotationSpeed: 90
+  StartPosition: {x: 0.5, y: 0.5}

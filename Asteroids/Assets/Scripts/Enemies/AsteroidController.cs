@@ -7,14 +7,16 @@ namespace Enemies
     public class AsteroidController : IController
     {
         private AsteroidConfig _asteroidConfig;
+        private CollisionHandler _collisionHandler;
         private ObjectPool<AsteroidModel, AsteroidView> _asteroidObjectPool;
         private Dictionary<AsteroidModel, AsteroidView> _asteroids;
 
         private float _currentSpawnTime;
         private float _timer;
 
-        public AsteroidController(AsteroidConfig asteroidConfig)
+        public AsteroidController(AsteroidConfig asteroidConfig, CollisionHandler collisionHandler)
         {
+            _collisionHandler = collisionHandler;
             _asteroidConfig = asteroidConfig;
             _asteroidObjectPool = new ObjectPool<AsteroidModel, AsteroidView>(_asteroidConfig.AsteroidViewPrefab);
             _asteroids = new Dictionary<AsteroidModel, AsteroidView>();
@@ -49,8 +51,10 @@ namespace Enemies
             _asteroidObjectPool.GetObject(out AsteroidModel model, out AsteroidView view);
             model.ChangePosition(GetRandomPosition());
             model.ChangeDirection((new Vector2(Random.value, Random.value) - model.Position).normalized);
+            model.SetCollisionRadius(_asteroidConfig.CollisionRadius);
             view.ChangePosition(model.Position);
             _asteroids.Add(model, view);
+            _collisionHandler.AddCollision(model);
         }
 
         private Vector2 GetRandomPosition()
@@ -74,6 +78,11 @@ namespace Enemies
                 pair.Key.ChangePosition(newPosition);
                 _asteroids[pair.Key].ChangePosition(newPosition);
             }
+        }
+
+        private void DeactivateAsteroid()
+        {
+
         }
     }
 }

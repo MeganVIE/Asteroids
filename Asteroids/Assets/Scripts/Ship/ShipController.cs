@@ -9,14 +9,20 @@ namespace Ship
         private ShipModel _model;
         private ShipView _view;
         private ShipTransformHandler _shipTransformHandler;
+        private CollisionHandler _collisionHandler;
 
-        public ShipController(ShipConfig shipConfigData, ShipView view, IMoveRotateInputData inputs)
+        public System.Action OnShipDestroy { get; set; }
+
+        public ShipController(ShipConfig shipConfig, ShipView view, IMoveRotateInputData inputs, CollisionHandler collisionHandler)
         {
-            _shipTransformHandler = new ShipTransformHandler(shipConfigData);
+            _shipTransformHandler = new ShipTransformHandler(shipConfig);
             _inputSystem = inputs;
 
-            _model = new ShipModel(shipConfigData.StartPosition);
-            _view = view;      
+            _model = new ShipModel(shipConfig.StartPosition, shipConfig.CollisionRadius);
+            _view = view;
+            _collisionHandler = collisionHandler;
+            _collisionHandler.AddCollision(_model);
+            OnShipDestroy = _model.OnCollision;
         }
 
         void IController.Update()

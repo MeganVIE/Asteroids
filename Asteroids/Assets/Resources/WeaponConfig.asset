@@ -14,3 +14,4 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   BulletSpeed: 0.3
   BulletViewPrefab: {fileID: 3394412864412449009, guid: a03348189c353d746b87b86e6018030a, type: 3}
+  CollisionRadius: 0.05

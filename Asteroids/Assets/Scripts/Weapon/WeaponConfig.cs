@@ -7,5 +7,6 @@ namespace Weapon
     {
         public float BulletSpeed = .1f;
         public BulletView BulletViewPrefab;
+        public float CollisionRadius = .01f;
     }
 }

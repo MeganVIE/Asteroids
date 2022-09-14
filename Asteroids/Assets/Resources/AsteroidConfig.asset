@@ -12,6 +12,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 779c06e11494cd648a9eea2f14681a86, type: 3}
   m_Name: AsteroidConfig
   m_EditorClassIdentifier: 
+  CollisionRadius: 0.5
   AsteroidViewPrefab: {fileID: 299086578185880349, guid: 17585896905eefd4dbb796a7e1074440, type: 3}
   AsteroidSpeed: 0.03
   AsteroidFirstSpawnTime: 3

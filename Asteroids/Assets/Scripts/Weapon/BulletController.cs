@@ -6,13 +6,15 @@ namespace Weapon
 {
     public class BulletController : IController
     {
+        private CollisionHandler _collisionHandler;
         private ModelTransform _shipModelTransform;
         private WeaponConfig _weaponConfig;
         private ObjectPool<BulletModel, BulletView> _bulletObjectPool;
         private Dictionary<BulletModel, BulletView> _bullets;
 
-        public BulletController(WeaponConfig weaponConfig, ModelTransform shipModelTransform)
+        public BulletController(WeaponConfig weaponConfig, ModelTransform shipModelTransform, CollisionHandler collisionHandler)
         {
+            _collisionHandler = collisionHandler;
             _shipModelTransform = shipModelTransform;
             _weaponConfig = weaponConfig;
             _bulletObjectPool = new ObjectPool<BulletModel, BulletView>(_weaponConfig.BulletViewPrefab);
@@ -41,8 +43,10 @@ namespace Weapon
             _bulletObjectPool.GetObject(out BulletModel model, out BulletView view);
             model.ChangePosition(_shipModelTransform.Position);
             model.ChangeDirection(direction);
+            model.SetCollisionRadius(_weaponConfig.CollisionRadius);
             view.ChangePosition(model.Position);
             _bullets.Add(model, view);
+            _collisionHandler.AddCollision(model);
         }
 
         private void UpdateBulletPosition(BulletModel model, out Vector2 newPosition)
@@ -61,6 +65,7 @@ namespace Weapon
         {
             _bulletObjectPool.DeactivateObject(model, _bullets[model]);
             _bullets.Remove(model);
+            _collisionHandler.RemoveCollision(model);
         }
     }
 }

@@ -16,35 +16,42 @@ public class GameRoot : MonoBehaviour
     [SerializeField] private AsteroidConfig _asteroidConfig;
 
     private WeaponHandler _weaponhandler;
-
+    private CollisionHandler _collisionHandler;
     private List<IController> _controllers;
 
-    public static GameRoot Instance { get; private set; }
-
-    private void Awake()
-    {
-        if (Instance)
-        {
-            Destroy(this);
-        }
-        Instance = this;
-    }
+    private bool _isGameOver;
 
     private void Start()
-    {
-        var shipController = new ShipController(_shipConfigData, _shipView, _inputSystem);
-        var bulletController = new BulletController(_weaponConfig, shipController.GetShipTransform());
+    {        
+        _isGameOver = false;
+        _collisionHandler = new CollisionHandler();
+
+        var shipController = new ShipController(_shipConfigData, _shipView, _inputSystem, _collisionHandler);
+        shipController.OnShipDestroy += GameOver;
+
+        var bulletController = new BulletController(_weaponConfig, shipController.GetShipTransform(), _collisionHandler);
         _weaponhandler = new WeaponHandler(bulletController, _inputSystem);
-        var asteroidController = new AsteroidController(_asteroidConfig);
+
+        var asteroidController = new AsteroidController(_asteroidConfig, _collisionHandler);
 
         _controllers = new List<IController> { shipController, bulletController, asteroidController };
     }
 
     private void Update()
     {
+        if (_isGameOver)
+            return;
+
         foreach (var controller in _controllers)
         {
             controller.Update();
         }
+        _collisionHandler.Update();
+    }
+    
+    public void GameOver()
+    {
+        _isGameOver = true;
+        Debug.Log("game over");
     }
 }
