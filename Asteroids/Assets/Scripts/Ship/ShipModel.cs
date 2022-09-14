@@ -1,23 +1,18 @@
-using System;
 using UnityEngine;
 
 namespace Ship
 {
-    public class ShipModel : ICollision
+    public class ShipModel : CollisionModel
     {
-        private float _collisionRadius;
-        public ModelTransform modelTransform { get; private set; }
-        float ICollision.Radius => _collisionRadius;
-        ObjectType ICollision.CollisionType => ObjectType.Ship;
-
-        public Action OnCollision { get; set; }
+        public float Rotation { get; private set; }
 
         public ShipModel(Vector2 startPosition, float collisionRadius)
         {
-            modelTransform = new ModelTransform(startPosition);
-            _collisionRadius = collisionRadius;
+            ChangePosition(startPosition);
+            SetCollisionRadius(collisionRadius);
+            CollisionType = ObjectType.Ship;
         }
 
-        public Vector2 GetPosition() => modelTransform.Position;
+        public void ChangeRotation(float newRotation) => Rotation = newRotation;
     }
 }

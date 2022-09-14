@@ -4,11 +4,10 @@ using UnityEngine;
 public class CollisionHandler
 {
     private Dictionary<ObjectType, ObjectType> _collisionsMap;
-    private Dictionary<ObjectType, List<ICollision>> _collisionObjects;
-
+    private Dictionary<ObjectType, List<CollisionModel>> _collisionObjects;
     public CollisionHandler()
     {
-        _collisionObjects = new Dictionary<ObjectType, List<ICollision>>();
+        _collisionObjects = new Dictionary<ObjectType, List<CollisionModel>>();
         _collisionsMap = new Dictionary<ObjectType, ObjectType>()
         {
             [ObjectType.Ship] = ObjectType.Enemy,
@@ -16,18 +15,18 @@ public class CollisionHandler
         };
     }
 
-    public void AddCollision(ICollision collision)
+    public void AddCollision(CollisionModel model)
     {
-        if (_collisionObjects.ContainsKey(collision.CollisionType))
-            _collisionObjects[collision.CollisionType].Add(collision);
+        if (_collisionObjects.ContainsKey(model.CollisionType))
+            _collisionObjects[model.CollisionType].Add(model);
         else
-            _collisionObjects.Add(collision.CollisionType, new List<ICollision>() { collision });
+            _collisionObjects.Add(model.CollisionType, new List<CollisionModel>() { model });
     }
 
-    public void RemoveCollision(ICollision collision)
+    public void RemoveCollision(CollisionModel model)
     {
-        if(_collisionObjects.ContainsKey(collision.CollisionType))
-            _collisionObjects[collision.CollisionType].Remove(collision);
+        if (_collisionObjects.ContainsKey(model.CollisionType))
+            _collisionObjects[model.CollisionType].Remove(model);
     }
 
     public void Update()
@@ -36,14 +35,21 @@ public class CollisionHandler
         {
             if (!_collisionObjects.ContainsKey(pair.Key))
                 continue;
-            foreach (var mainCollision in _collisionObjects[pair.Key])
+            var mains = _collisionObjects[pair.Key];
+
+            for (int j = 0; j < mains.Count; j++)
             {
                 if (!_collisionObjects.ContainsKey(pair.Value))
                     continue;
-                foreach (var targetCollision in _collisionObjects[pair.Value])
+                var targets = _collisionObjects[pair.Value];
+
+                for (int i = 0; j>=0 && i < targets.Count; i++)
                 {
-                    if ((mainCollision.GetPosition() - targetCollision.GetPosition()).magnitude < mainCollision.Radius + targetCollision.Radius)
-                        mainCollision.OnCollision.Invoke();
+                    if ((mains[j].Position - targets[i].Position).magnitude < mains[j].CollisionRadius + targets[i].CollisionRadius)
+                    {
+                        mains[j--].OnCollision?.Invoke();
+                        targets[i--].OnCollision?.Invoke();
+                    }
                 }
             }
         }

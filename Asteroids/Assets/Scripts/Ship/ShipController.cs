@@ -23,7 +23,7 @@ namespace Ship
             _collisionHandler = collisionHandler;
             _collisionHandler.AddCollision(_model);
 
-            OnShipDestroy = _model.OnCollision;
+            _model.OnCollision += onShipCollision;
         }
 
         void IController.Update()
@@ -36,25 +36,31 @@ namespace Ship
             UpdateRotation();
         }
 
-        public ModelTransform GetShipTransform() => _model.modelTransform;
+        public ShipModel GetShipModel() => _model;
+
+        private void onShipCollision()
+        {
+            OnShipDestroy?.Invoke();
+            _model.OnCollision -= onShipCollision;
+        }
 
         private void UpdateAcceleration()
         {
             if (_inputSystem.MoveForwardPhase == UnityEngine.InputSystem.InputActionPhase.Performed)
-                _shipTransformHandler.IncreaseAcceleration(_model.modelTransform.Rotation, Time.deltaTime);
+                _shipTransformHandler.IncreaseAcceleration(_model.Rotation, Time.deltaTime);
             else
                 _shipTransformHandler.DecreaseAcceleration(Time.deltaTime);
         }
         private void UpdatePosition()
         {
-            _shipTransformHandler.ChangePosition(_model.modelTransform);
-            _view.ChangePosition(_model.modelTransform.Position);
+            _shipTransformHandler.ChangePosition(_model);
+            _view.ChangePosition(_model.Position);
         }
 
         private void UpdateRotation()
         {
-            _shipTransformHandler.ChangeRotation(_model.modelTransform, _inputSystem.RotationValue, Time.deltaTime);
-            _view.ChangeRotation(_model.modelTransform.Rotation);
+            _shipTransformHandler.ChangeRotation(_model, _inputSystem.RotationValue, Time.deltaTime);
+            _view.ChangeRotation(_model.Rotation);
         }
     }
 }

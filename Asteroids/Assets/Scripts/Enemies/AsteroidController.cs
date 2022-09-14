@@ -7,8 +7,8 @@ namespace Enemies
     {
         private AsteroidConfig _asteroidConfig;
         private CollisionHandler _collisionHandler;
-        private ObjectPool<AsteroidModel, AsteroidView> _asteroidObjectPool;
-        private Dictionary<AsteroidModel, AsteroidView> _asteroids;
+        private ObjectPool<BigAsteroidModel, BigAsteroidView> _bigAsteroidObjectPool;
+        private Dictionary<BigAsteroidModel, BigAsteroidView> _bigAsteroids;
 
         private float _currentSpawnTime;
         private float _timer;
@@ -17,8 +17,8 @@ namespace Enemies
         {
             _collisionHandler = collisionHandler;
             _asteroidConfig = asteroidConfig;
-            _asteroidObjectPool = new ObjectPool<AsteroidModel, AsteroidView>(_asteroidConfig.AsteroidViewPrefab);
-            _asteroids = new Dictionary<AsteroidModel, AsteroidView>();
+            _bigAsteroidObjectPool = new ObjectPool<BigAsteroidModel, BigAsteroidView>(_asteroidConfig.BigAsteroidViewPrefab);
+            _bigAsteroids = new Dictionary<BigAsteroidModel, BigAsteroidView>();
 
             _currentSpawnTime = _asteroidConfig.AsteroidFirstSpawnTime;
             _timer = 0;
@@ -28,7 +28,7 @@ namespace Enemies
         {
             Timer();
 
-            if (_asteroids.Count == 0)
+            if (_bigAsteroids.Count == 0)
                 return;
 
             UpdatePositions();
@@ -47,30 +47,35 @@ namespace Enemies
 
         private void SpawnAsteroid()
         {
-            _asteroidObjectPool.GetObject(out AsteroidModel model, out AsteroidView view);
+            _bigAsteroidObjectPool.GetObject(out BigAsteroidModel model, out BigAsteroidView view);
             model.ChangePosition(CameraData.GetRandomPositionOnBound());
-            model.ChangeDirection((new Vector2(Random.value, Random.value) - model.Position)/*.normalized*/);
+            model.ChangeDirection(new Vector2(Random.value, Random.value) - model.Position);
             model.SetCollisionRadius(_asteroidConfig.CollisionRadius);
             view.ChangePosition(model.Position);
-            _asteroids.Add(model, view);
+            _bigAsteroids.Add(model, view);
             _collisionHandler.AddCollision(model);
+
+            model.OnDestroy += DeactivateAsteroid;
         }
 
         private void UpdatePositions()
         {
-            foreach (var pair in _asteroids)
+            foreach (var pair in _bigAsteroids)
             {
                 var newPosition = pair.Key.Position + pair.Key.Direction * _asteroidConfig.AsteroidSpeed * Time.deltaTime;
                 newPosition = CameraData.RepeatInViewport(newPosition);
 
                 pair.Key.ChangePosition(newPosition);
-                _asteroids[pair.Key].ChangePosition(newPosition);
+                _bigAsteroids[pair.Key].ChangePosition(newPosition);
             }
         }
 
-        private void DeactivateAsteroid()
+        private void DeactivateAsteroid(BigAsteroidModel model)
         {
-
+            _bigAsteroidObjectPool.DeactivateObject(model, _bigAsteroids[model]);
+            _bigAsteroids.Remove(model);
+            _collisionHandler.RemoveCollision(model);
+            model.OnDestroy -= DeactivateAsteroid;
         }
     }
 }

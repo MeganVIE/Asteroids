@@ -1,30 +1,25 @@
 ﻿using System.Linq;
 using System.Collections.Generic;
 using UnityEngine;
+using Ship;
 
 namespace Weapon
 {
     public class BulletController : IController
     {
         private CollisionHandler _collisionHandler;
-        private ModelTransform _shipModelTransform;
+        private ShipModel _model;
         private WeaponConfig _weaponConfig;
         private ObjectPool<BulletModel, BulletView> _bulletObjectPool;
         private Dictionary<BulletModel, BulletView> _bullets;
 
-        private float _halfViewportHeight;
-        private float _halfViewportWidth;
-
-        public BulletController(WeaponConfig weaponConfig, ModelTransform shipModelTransform, CollisionHandler collisionHandler)
+        public BulletController(WeaponConfig weaponConfig, ShipModel model, CollisionHandler collisionHandler)
         {
             _collisionHandler = collisionHandler;
-            _shipModelTransform = shipModelTransform;
+            _model = model;
             _weaponConfig = weaponConfig;
             _bulletObjectPool = new ObjectPool<BulletModel, BulletView>(_weaponConfig.BulletViewPrefab);
             _bullets = new Dictionary<BulletModel, BulletView>();
-
-            _halfViewportHeight = Camera.main.orthographicSize;
-            _halfViewportWidth = _halfViewportHeight * Camera.main.aspect;
         }
 
         void IController.Update()
@@ -44,15 +39,17 @@ namespace Weapon
 
         public void CreateBullet()
         {
-            var direction = Quaternion.Euler(0, 0, _shipModelTransform.Rotation) * Vector3.up;
+            var direction = Quaternion.Euler(0, 0, _model.Rotation) * Vector3.up;
 
             _bulletObjectPool.GetObject(out BulletModel model, out BulletView view);
-            model.ChangePosition(_shipModelTransform.Position);
+            model.ChangePosition(_model.Position);
             model.ChangeDirection(direction);
             model.SetCollisionRadius(_weaponConfig.CollisionRadius);
             view.ChangePosition(model.Position);
             _bullets.Add(model, view);
             _collisionHandler.AddCollision(model);
+
+            model.OnDestroy += DeactivateBullet;
         }
 
         private void UpdateBulletPosition(BulletModel model, out Vector2 newPosition)
@@ -67,6 +64,7 @@ namespace Weapon
             _bulletObjectPool.DeactivateObject(model, _bullets[model]);
             _bullets.Remove(model);
             _collisionHandler.RemoveCollision(model);
+            model.OnDestroy -= DeactivateBullet;
         }
     }
 }

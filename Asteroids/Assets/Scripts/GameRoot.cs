@@ -30,7 +30,7 @@ public class GameRoot : MonoBehaviour
         var shipController = new ShipController(_shipConfigData, _shipView, _inputSystem, _collisionHandler);
         shipController.OnShipDestroy += GameOver;
 
-        var bulletController = new BulletController(_weaponConfig, shipController.GetShipTransform(), _collisionHandler);
+        var bulletController = new BulletController(_weaponConfig, shipController.GetShipModel(), _collisionHandler);
         _weaponhandler = new WeaponHandler(bulletController, _inputSystem);
 
         var asteroidController = new AsteroidController(_asteroidConfig, _collisionHandler);
