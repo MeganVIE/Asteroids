@@ -13,8 +13,8 @@ MonoBehaviour:
   m_Name: ShipConfig
   m_EditorClassIdentifier: 
   CollisionRadius: 0.3
-  MaxSpeed: 0.001
-  AccelerationSpeed: 0.0005
+  MaxSpeed: 0.015
+  AccelerationSpeed: 0.005
   SlowdownSpeed: 1
   RotationSpeed: 90
-  StartPosition: {x: 0.5, y: 0.5}
+  StartPosition: {x: 0, y: 0}

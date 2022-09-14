@@ -5,8 +5,8 @@ namespace Weapon
     [CreateAssetMenu(fileName = "NewWeaponConfig", menuName = "Weapon Config", order = 11)]
     public class WeaponConfig : ScriptableObject
     {
-        public float BulletSpeed = .1f;
+        public float BulletSpeed = 3;
         public BulletView BulletViewPrefab;
-        public float CollisionRadius = .01f;
+        public float CollisionRadius = .05f;
     }
 }

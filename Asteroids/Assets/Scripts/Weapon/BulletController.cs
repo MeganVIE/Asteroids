@@ -12,6 +12,9 @@ namespace Weapon
         private ObjectPool<BulletModel, BulletView> _bulletObjectPool;
         private Dictionary<BulletModel, BulletView> _bullets;
 
+        private float _halfViewportHeight;
+        private float _halfViewportWidth;
+
         public BulletController(WeaponConfig weaponConfig, ModelTransform shipModelTransform, CollisionHandler collisionHandler)
         {
             _collisionHandler = collisionHandler;
@@ -19,7 +22,10 @@ namespace Weapon
             _weaponConfig = weaponConfig;
             _bulletObjectPool = new ObjectPool<BulletModel, BulletView>(_weaponConfig.BulletViewPrefab);
             _bullets = new Dictionary<BulletModel, BulletView>();
-        }        
+
+            _halfViewportHeight = Camera.main.orthographicSize;
+            _halfViewportWidth = _halfViewportHeight * Camera.main.aspect;
+        }
 
         void IController.Update()
         {
@@ -31,7 +37,7 @@ namespace Weapon
             {
                 UpdateBulletPosition(bulletModels[i], out Vector2 newPosition);
 
-                if (IsOutsideViewport(newPosition))
+                if (CameraData.IsOutsideViewport(newPosition))
                     DeactivateBullet(bulletModels[i]);
             }
         }
@@ -54,11 +60,6 @@ namespace Weapon
             newPosition = model.Position + model.Direction * _weaponConfig.BulletSpeed * Time.deltaTime;
             model.ChangePosition(newPosition);
             _bullets[model].ChangePosition(newPosition);
-        }
-
-        private bool IsOutsideViewport(Vector2 position)
-        {
-            return (position.x < 0 || position.x > 1) || (position.y < 0 || position.y > 1);
         }
 
         private void DeactivateBullet(BulletModel model)

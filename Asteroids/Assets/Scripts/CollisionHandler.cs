@@ -6,8 +6,6 @@ public class CollisionHandler
     private Dictionary<ObjectType, ObjectType> _collisionsMap;
     private Dictionary<ObjectType, List<ICollision>> _collisionObjects;
 
-    private Camera _camera;
-
     public CollisionHandler()
     {
         _collisionObjects = new Dictionary<ObjectType, List<ICollision>>();
@@ -34,21 +32,18 @@ public class CollisionHandler
 
     public void Update()
     {
-        if (_camera == null)
-            _camera = Camera.main;
-
         foreach (var pair in _collisionsMap)
         {
+            if (!_collisionObjects.ContainsKey(pair.Key))
+                continue;
             foreach (var mainCollision in _collisionObjects[pair.Key])
             {
                 if (!_collisionObjects.ContainsKey(pair.Value))
                     continue;
-                var mainPosition = _camera.ViewportToWorldPoint(mainCollision.GetPosition());
                 foreach (var targetCollision in _collisionObjects[pair.Value])
                 {
-                    var targetPosition = _camera.ViewportToWorldPoint(targetCollision.GetPosition());
-                    if ((mainPosition - targetPosition).magnitude < mainCollision.Radius + targetCollision.Radius)
-                        mainCollision.OnCollision?.Invoke();                        
+                    if ((mainCollision.GetPosition() - targetCollision.GetPosition()).magnitude < mainCollision.Radius + targetCollision.Radius)
+                        mainCollision.OnCollision.Invoke();
                 }
             }
         }

@@ -32,8 +32,7 @@ namespace Ship
         public void ChangePosition(ModelTransform modelTransform)
         {
             var newPosition = modelTransform.Position + _acceleration;
-            newPosition.x = Mathf.Repeat(newPosition.x, 1);
-            newPosition.y = Mathf.Repeat(newPosition.y, 1);
+            newPosition = CameraData.RepeatInViewport(newPosition);
 
             modelTransform.ChangePosition(newPosition);
         }

@@ -22,6 +22,7 @@ namespace Ship
             _view = view;
             _collisionHandler = collisionHandler;
             _collisionHandler.AddCollision(_model);
+
             OnShipDestroy = _model.OnCollision;
         }
 

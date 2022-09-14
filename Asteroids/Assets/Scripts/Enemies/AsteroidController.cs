@@ -1,6 +1,5 @@
 ﻿using System.Collections.Generic;
 using UnityEngine;
-using System.Collections;
 
 namespace Enemies
 {
@@ -49,22 +48,12 @@ namespace Enemies
         private void SpawnAsteroid()
         {
             _asteroidObjectPool.GetObject(out AsteroidModel model, out AsteroidView view);
-            model.ChangePosition(GetRandomPosition());
-            model.ChangeDirection((new Vector2(Random.value, Random.value) - model.Position).normalized);
+            model.ChangePosition(CameraData.GetRandomPositionOnBound());
+            model.ChangeDirection((new Vector2(Random.value, Random.value) - model.Position)/*.normalized*/);
             model.SetCollisionRadius(_asteroidConfig.CollisionRadius);
             view.ChangePosition(model.Position);
             _asteroids.Add(model, view);
             _collisionHandler.AddCollision(model);
-        }
-
-        private Vector2 GetRandomPosition()
-        {
-            var position = Random.insideUnitCircle;
-            if (Random.Range(0, 2) == 0)
-                position.x = position.x > .5f ? 1 : 0;
-            else
-                position.y = position.y > .5f ? 1 : 0;
-            return position;
         }
 
         private void UpdatePositions()
@@ -72,8 +61,7 @@ namespace Enemies
             foreach (var pair in _asteroids)
             {
                 var newPosition = pair.Key.Position + pair.Key.Direction * _asteroidConfig.AsteroidSpeed * Time.deltaTime;
-                newPosition.x = Mathf.Repeat(newPosition.x, 1);
-                newPosition.y = Mathf.Repeat(newPosition.y, 1);
+                newPosition = CameraData.RepeatInViewport(newPosition);
 
                 pair.Key.ChangePosition(newPosition);
                 _asteroids[pair.Key].ChangePosition(newPosition);

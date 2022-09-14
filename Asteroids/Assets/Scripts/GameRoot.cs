@@ -22,7 +22,8 @@ public class GameRoot : MonoBehaviour
     private bool _isGameOver;
 
     private void Start()
-    {        
+    {
+        CameraData.Init(Camera.main);
         _isGameOver = false;
         _collisionHandler = new CollisionHandler();
 
