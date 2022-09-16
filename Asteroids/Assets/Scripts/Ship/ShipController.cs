@@ -26,6 +26,8 @@ namespace Ship
             _model.OnCollision += onShipCollision;
         }
 
+        public float GetCurrentSpeed() => _shipTransformHandler.CurrentSpeed;
+
         void IUpdatable.Update()
         {
             UpdateAcceleration();

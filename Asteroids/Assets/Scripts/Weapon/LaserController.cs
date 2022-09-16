@@ -13,6 +13,8 @@ namespace Weapon
         private float _rechargeTimer;
 
         public bool CanCreateLaser => _lasersCurrentAmount > 0;
+        public byte CurrentAmount => _lasersCurrentAmount;
+        public float RechargeTime => _lasersCurrentAmount >= _weaponConfig.LaserMaxAmount ? 0 : _weaponConfig.LaserAmountRechargeTime - _rechargeTimer;
 
         public LaserController(WeaponConfig weaponConfig, ShipModel model, CollisionHandler collisionHandler) :
             base(weaponConfig, model, collisionHandler)

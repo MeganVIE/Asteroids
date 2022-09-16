@@ -11,7 +11,7 @@ namespace Enemies
             _shipModel = shipModel;
         }
 
-        protected override void UpdateModelViewData(DestroyableDirectedModel model)
+        protected override void UpdateModelViewData(Enemy model)
         {
             var newDirection = (_shipModel.Position - model.Position).normalized;
             model.ChangeDirection(newDirection);

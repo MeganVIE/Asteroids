@@ -8,6 +8,8 @@ namespace Ship
         private ShipConfig _shipConfigData;
         private Vector2 _acceleration;
 
+        public float CurrentSpeed => _acceleration.magnitude;
+
         public ShipTransformHandler(ShipConfig shipConfigData, CameraData cameraData)
         {
             _cameraData = cameraData;

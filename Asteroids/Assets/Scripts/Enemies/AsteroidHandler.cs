@@ -6,6 +6,7 @@
         private EnemyPeriodicSpawnController _bigAsteroidController;
         private SmallAsteroidConfig _smallConfig;
 
+        public System.Action<Enemy> OnEnemyDestroyed;
         public AsteroidHandler(BigAsteroidConfig bigConfig, SmallAsteroidConfig smallConfig, CollisionHandler collisionHandler, CameraData cameraData)
         {
             _smallConfig = smallConfig;
@@ -21,12 +22,14 @@
             _smallAsteroidsController.Update();
         }
 
-        private void OnBigAsteroidDestroyed(DestroyableDirectedModel model)
+        private void OnBigAsteroidDestroyed(Enemy model)
         {
             for (int i = 0; i < _smallConfig.SpawnAmount; i++)
             {
                 _smallAsteroidsController.SpawnEnemy(model.Position);
             }
+            OnAsteroidDestroyed(model);
         }
+        private void OnAsteroidDestroyed(Enemy model) => OnEnemyDestroyed?.Invoke(model);
     }
 }

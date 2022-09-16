@@ -6,20 +6,20 @@ namespace Enemies
     public class EnemySpawnController: IUpdatable
     {
         protected CameraData _cameraData;
-        protected SpawnObjectConfig _enemyConfig;
+        protected ObjectPointsConfig _enemyConfig;
         private CollisionHandler _collisionHandler;
 
-        private ObjectPool<DestroyableDirectedModel, View> _enemiesObjectPool;
-        private Dictionary<DestroyableDirectedModel, View> _enemies;
+        private ObjectPool<Enemy, View> _enemiesObjectPool;
+        private Dictionary<Enemy, View> _enemies;
 
-        public System.Action<DestroyableDirectedModel> OnEnemyDestroyed;
-        public EnemySpawnController(SpawnObjectConfig config, CollisionHandler collisionHandler, CameraData cameraData)
+        public System.Action<Enemy> OnEnemyDestroyed;
+        public EnemySpawnController(ObjectPointsConfig config, CollisionHandler collisionHandler, CameraData cameraData)
         {
             _cameraData = cameraData;
             _collisionHandler = collisionHandler;
             _enemyConfig = config;
-            _enemiesObjectPool = new ObjectPool<DestroyableDirectedModel, View>(_enemyConfig.ViewPrefab, ObjectType.Enemy, _enemyConfig.CollisionRadius);
-            _enemies = new Dictionary<DestroyableDirectedModel, View>();
+            _enemiesObjectPool = new ObjectPool<Enemy, View>(_enemyConfig.ViewPrefab, ObjectType.Enemy, _enemyConfig.CollisionRadius);
+            _enemies = new Dictionary<Enemy, View>();
         }
 
         public virtual void Update()
@@ -38,7 +38,7 @@ namespace Enemies
             }
         }
 
-        protected virtual void UpdateModelViewData(DestroyableDirectedModel model)
+        protected virtual void UpdateModelViewData(Enemy model)
         {
             var newPosition = model.Position + model.Direction * _enemyConfig.Speed * Time.deltaTime;
             newPosition = _cameraData.RepeatInViewport(newPosition);
@@ -49,14 +49,15 @@ namespace Enemies
 
         public void SpawnEnemy(Vector2 position)
         {
-            _enemiesObjectPool.GetModelViewPair(out DestroyableDirectedModel model, out View view);
+            _enemiesObjectPool.GetModelViewPair(out Enemy model, out View view);
             EnemyModelViewSettings(model, view, position);
             _enemies.Add(model, view);
             model.OnDestroy += DeactivateEnemy;
         }
 
-        private void EnemyModelViewSettings(DestroyableDirectedModel model, View view, Vector2 position)
+        private void EnemyModelViewSettings(Enemy model, View view, Vector2 position)
         {
+            model.SetPoints(_enemyConfig.Points);
             model.ChangePosition(position);
             model.ChangeDirection(new Vector2(Random.value, Random.value) - model.Position);
             view.ChangePosition(model.Position);
@@ -65,11 +66,12 @@ namespace Enemies
 
         private void DeactivateEnemy(DestroyableDirectedModel model)
         {
-            _enemiesObjectPool.DeactivateModelViewPair(model, _enemies[model]);
-            _enemies.Remove(model);
+            var enemyModel = (Enemy)model;
+            _enemiesObjectPool.DeactivateModelViewPair(enemyModel, _enemies[enemyModel]);
+            _enemies.Remove(enemyModel);
             _collisionHandler.RemoveCollision(model);
             model.OnDestroy -= DeactivateEnemy;
-            OnEnemyDestroyed?.Invoke(model);
+            OnEnemyDestroyed?.Invoke(enemyModel);
         }
     }
 }

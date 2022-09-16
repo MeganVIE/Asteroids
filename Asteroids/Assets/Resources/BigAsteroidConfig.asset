@@ -15,5 +15,6 @@ MonoBehaviour:
   CollisionRadius: 0.5
   ViewPrefab: {fileID: 299086578185880349, guid: 17585896905eefd4dbb796a7e1074440, type: 3}
   Speed: 0.1
+  Points: 100
   FirstSpawnTime: 3
   DelaySpawnTime: 2

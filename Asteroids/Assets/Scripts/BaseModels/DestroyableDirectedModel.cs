@@ -18,3 +18,9 @@ public class DestroyableDirectedModel : DirectedModel
         OnDestroy?.Invoke(this);
     }
 }
+
+public class Enemy : DestroyableDirectedModel
+{
+    public int Points { get; private set; }
+    public void SetPoints(int points) => Points = points;
+}
