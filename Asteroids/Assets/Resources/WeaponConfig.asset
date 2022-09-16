@@ -15,3 +15,7 @@ MonoBehaviour:
   BulletSpeed: 3
   BulletViewPrefab: {fileID: 3394412864412449009, guid: a03348189c353d746b87b86e6018030a, type: 3}
   CollisionRadius: 0.05
+  LaserViewPrefab: {fileID: 1583973771166044394, guid: dba5341deae5d024e9991d7712d26117, type: 3}
+  LaserLifeTime: 1
+  LaserMaxAmount: 5
+  LaserAmountRechargeTime: 2

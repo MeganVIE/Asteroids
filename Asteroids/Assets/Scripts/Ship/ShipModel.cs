@@ -9,10 +9,14 @@ namespace Ship
         public ShipModel(Vector2 startPosition, float collisionRadius)
         {
             ChangePosition(startPosition);
-            SetCollisionRadius(collisionRadius);
-            CollisionType = ObjectType.Ship;
+            SetCollisionData(collisionRadius, ObjectType.Ship);
         }
 
         public void ChangeRotation(float newRotation) => Rotation = newRotation;
+
+        public override bool Collision(CollisionModel targetModel)
+        {
+            return (Position - targetModel.Position).magnitude < CollisionRadius + targetModel.CollisionRadius;
+        }
     }
 }

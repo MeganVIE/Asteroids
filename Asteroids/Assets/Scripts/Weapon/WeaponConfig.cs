@@ -7,6 +7,12 @@ namespace Weapon
     {
         public float BulletSpeed = 3;
         public BulletView BulletViewPrefab;
-        public float CollisionRadius = .05f;
+        public float BulletCollisionRadius = .05f;
+
+        public LaserView LaserViewPrefab;
+        public float LaserCollisionRadius = 10f;
+        public float LaserLifeTime = 1f;
+        public byte LaserMaxAmount = 5;
+        public float LaserAmountRechargeTime = 2f;
     }
 }

@@ -2,7 +2,7 @@ using UnityEngine;
 
 namespace Ship
 {
-    public class ShipController : IController
+    public class ShipController : IUpdatable
     {
         private IMoveRotateInputData _inputSystem;
 
@@ -26,7 +26,7 @@ namespace Ship
             _model.OnCollision += onShipCollision;
         }
 
-        void IController.Update()
+        void IUpdatable.Update()
         {
             UpdateAcceleration();
             UpdatePosition();

@@ -1,7 +1,7 @@
 ﻿using System.Collections.Generic;
 using UnityEngine;
 
-public class CollisionHandler
+public class CollisionHandler : IUpdatable
 {
     private Dictionary<ObjectType, ObjectType> _collisionsMap;
     private Dictionary<ObjectType, List<CollisionModel>> _collisionObjects;
@@ -11,25 +11,26 @@ public class CollisionHandler
         _collisionsMap = new Dictionary<ObjectType, ObjectType>()
         {
             [ObjectType.Ship] = ObjectType.Enemy,
-            [ObjectType.Bullet] = ObjectType.Enemy
+            [ObjectType.Bullet] = ObjectType.Enemy,
+            [ObjectType.Laser]=ObjectType.Enemy
         };
     }
 
     public void AddCollision(CollisionModel model)
     {
-        if (_collisionObjects.ContainsKey(model.CollisionType))
-            _collisionObjects[model.CollisionType].Add(model);
+        if (_collisionObjects.ContainsKey(model.ObjectCollisionType))
+            _collisionObjects[model.ObjectCollisionType].Add(model);
         else
-            _collisionObjects.Add(model.CollisionType, new List<CollisionModel>() { model });
+            _collisionObjects.Add(model.ObjectCollisionType, new List<CollisionModel>() { model });
     }
 
     public void RemoveCollision(CollisionModel model)
     {
-        if (_collisionObjects.ContainsKey(model.CollisionType))
-            _collisionObjects[model.CollisionType].Remove(model);
+        if (_collisionObjects.ContainsKey(model.ObjectCollisionType))
+            _collisionObjects[model.ObjectCollisionType].Remove(model);
     }
 
-    public void Update()
+    void IUpdatable.Update()
     {
         foreach (var pair in _collisionsMap)
         {
@@ -45,10 +46,14 @@ public class CollisionHandler
 
                 for (int i = 0; j>=0 && i < targets.Count; i++)
                 {
-                    if ((mains[j].Position - targets[i].Position).magnitude < mains[j].CollisionRadius + targets[i].CollisionRadius)
+                    if (mains[j].Collision(targets[i]))
                     {
-                        mains[j--].OnCollision?.Invoke();
+                        var main = mains[j];
+                        main.OnCollision?.Invoke();
                         targets[i--].OnCollision?.Invoke();
+
+                        if (main.ObjectCollisionType != ObjectType.Laser)
+                            j--;                            
                     }
                 }
             }

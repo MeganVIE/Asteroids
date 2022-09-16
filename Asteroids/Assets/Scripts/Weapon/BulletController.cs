@@ -1,28 +1,18 @@
 ﻿using System.Linq;
-using System.Collections.Generic;
 using UnityEngine;
 using Ship;
 
 namespace Weapon
 {
-    public class BulletController : IController
+    public class BulletController : BaseBulletHandler<DestroyableDirectedModel, BulletView>, IUpdatable
     {
-        private CollisionHandler _collisionHandler;
-        private ShipModel _model;
-        private WeaponConfig _weaponConfig;
-        private ObjectPool<BulletModel, BulletView> _bulletObjectPool;
-        private Dictionary<BulletModel, BulletView> _bullets;
-
-        public BulletController(WeaponConfig weaponConfig, ShipModel model, CollisionHandler collisionHandler)
+        public BulletController(WeaponConfig weaponConfig, ShipModel model, CollisionHandler collisionHandler) :
+            base(weaponConfig, model, collisionHandler)
         {
-            _collisionHandler = collisionHandler;
-            _model = model;
-            _weaponConfig = weaponConfig;
-            _bulletObjectPool = new ObjectPool<BulletModel, BulletView>(_weaponConfig.BulletViewPrefab);
-            _bullets = new Dictionary<BulletModel, BulletView>();
+            _bulletObjectPool = new ObjectPool<DestroyableDirectedModel, BulletView>(_weaponConfig.BulletViewPrefab, ObjectType.Bullet,_weaponConfig.BulletCollisionRadius);
         }
 
-        void IController.Update()
+        void IUpdatable.Update()
         {
             if (_bullets.Count == 0)
                 return;
@@ -37,34 +27,23 @@ namespace Weapon
             }
         }
 
-        public void CreateBullet()
+        protected override void ModelViewSettings(DestroyableDirectedModel model, BulletView view)
         {
-            var direction = Quaternion.Euler(0, 0, _model.Rotation) * Vector3.up;
-
-            _bulletObjectPool.GetObject(out BulletModel model, out BulletView view);
-            model.ChangePosition(_model.Position);
-            model.ChangeDirection(direction);
-            model.SetCollisionRadius(_weaponConfig.CollisionRadius);
-            view.ChangePosition(model.Position);
-            _bullets.Add(model, view);
-            _collisionHandler.AddCollision(model);
-
+            base.ModelViewSettings(model, view);
             model.OnDestroy += DeactivateBullet;
         }
 
-        private void UpdateBulletPosition(BulletModel model, out Vector2 newPosition)
+        protected override void DeactivateBullet(DestroyableDirectedModel model)
+        {
+            base.DeactivateBullet(model);
+            model.OnDestroy -= DeactivateBullet;
+        }
+
+        private void UpdateBulletPosition(DestroyableDirectedModel model, out Vector2 newPosition)
         {
             newPosition = model.Position + model.Direction * _weaponConfig.BulletSpeed * Time.deltaTime;
             model.ChangePosition(newPosition);
             _bullets[model].ChangePosition(newPosition);
-        }
-
-        private void DeactivateBullet(BulletModel model)
-        {
-            _bulletObjectPool.DeactivateObject(model, _bullets[model]);
-            _bullets.Remove(model);
-            _collisionHandler.RemoveCollision(model);
-            model.OnDestroy -= DeactivateBullet;
         }
     }
 }

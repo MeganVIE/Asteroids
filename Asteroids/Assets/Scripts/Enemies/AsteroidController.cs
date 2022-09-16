@@ -3,12 +3,12 @@ using UnityEngine;
 
 namespace Enemies
 {
-    public class AsteroidController : IController
+    public class AsteroidController : IUpdatable
     {
         private AsteroidConfig _asteroidConfig;
         private CollisionHandler _collisionHandler;
-        private ObjectPool<BigAsteroidModel, BigAsteroidView> _bigAsteroidObjectPool;
-        private Dictionary<BigAsteroidModel, BigAsteroidView> _bigAsteroids;
+        private ObjectPool<DestroyableDirectedModel, BigAsteroidView> _bigAsteroidObjectPool;
+        private Dictionary<DestroyableDirectedModel, BigAsteroidView> _bigAsteroids;
 
         private float _currentSpawnTime;
         private float _timer;
@@ -17,14 +17,14 @@ namespace Enemies
         {
             _collisionHandler = collisionHandler;
             _asteroidConfig = asteroidConfig;
-            _bigAsteroidObjectPool = new ObjectPool<BigAsteroidModel, BigAsteroidView>(_asteroidConfig.BigAsteroidViewPrefab);
-            _bigAsteroids = new Dictionary<BigAsteroidModel, BigAsteroidView>();
+            _bigAsteroidObjectPool = new ObjectPool<DestroyableDirectedModel, BigAsteroidView>(_asteroidConfig.BigAsteroidViewPrefab, ObjectType.Enemy,_asteroidConfig.CollisionRadius);
+            _bigAsteroids = new Dictionary<DestroyableDirectedModel, BigAsteroidView>();
 
             _currentSpawnTime = _asteroidConfig.AsteroidFirstSpawnTime;
             _timer = 0;
         }
 
-        void IController.Update()
+        void IUpdatable.Update()
         {
             Timer();
 
@@ -47,10 +47,9 @@ namespace Enemies
 
         private void SpawnAsteroid()
         {
-            _bigAsteroidObjectPool.GetObject(out BigAsteroidModel model, out BigAsteroidView view);
+            _bigAsteroidObjectPool.GetModelViewPair(out DestroyableDirectedModel model, out BigAsteroidView view);
             model.ChangePosition(CameraData.GetRandomPositionOnBound());
             model.ChangeDirection(new Vector2(Random.value, Random.value) - model.Position);
-            model.SetCollisionRadius(_asteroidConfig.CollisionRadius);
             view.ChangePosition(model.Position);
             _bigAsteroids.Add(model, view);
             _collisionHandler.AddCollision(model);
@@ -70,9 +69,9 @@ namespace Enemies
             }
         }
 
-        private void DeactivateAsteroid(BigAsteroidModel model)
+        private void DeactivateAsteroid(DestroyableDirectedModel model)
         {
-            _bigAsteroidObjectPool.DeactivateObject(model, _bigAsteroids[model]);
+            _bigAsteroidObjectPool.DeactivateModelViewPair(model, _bigAsteroids[model]);
             _bigAsteroids.Remove(model);
             _collisionHandler.RemoveCollision(model);
             model.OnDestroy -= DeactivateAsteroid;

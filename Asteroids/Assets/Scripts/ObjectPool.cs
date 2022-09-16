@@ -2,22 +2,27 @@
 using System.Linq;
 using UnityEngine;
 
-public class ObjectPool<T1,T2> where T1 : class, new() where T2 : MonoBehaviour
+public class ObjectPool<T1,T2> where T1 : CollisionModel, new() where T2 : MonoBehaviour
 {
     private T2 _prefab;
+    private ObjectType _type;
+    private float _radius;
     private Dictionary<T1, T2> _unusedObjects;
 
-    public ObjectPool(T2 prefab)
+    public ObjectPool(T2 prefab, ObjectType type, float radius)
     {
         _prefab = prefab;
+        _type = type;
+        _radius = radius;
         _unusedObjects = new Dictionary<T1, T2>();
     }
 
-    public void GetObject(out T1 model, out T2 view)
+    public void GetModelViewPair(out T1 model, out T2 view)
     {
         if (_unusedObjects.Count == 0)
         {
             model = new T1();
+            model.SetCollisionData(_radius, _type);
             view = Object.Instantiate(_prefab);
         }
         else
@@ -29,7 +34,7 @@ public class ObjectPool<T1,T2> where T1 : class, new() where T2 : MonoBehaviour
         }
     }
 
-    public void DeactivateObject(T1 model, T2 view)
+    public void DeactivateModelViewPair(T1 model, T2 view)
     {
         _unusedObjects.Add(model, view);
         view.gameObject.SetActive(false);

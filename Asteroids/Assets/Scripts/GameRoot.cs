@@ -15,9 +15,9 @@ public class GameRoot : MonoBehaviour
     [Space]
     [SerializeField] private AsteroidConfig _asteroidConfig;
 
-    private WeaponHandler _weaponhandler;
+    private WeaponInputsHandler _weaponInputsHandler;
     private CollisionHandler _collisionHandler;
-    private List<IController> _controllers;
+    private List<IUpdatable> _updatables;
 
     private bool _isGameOver;
 
@@ -31,11 +31,12 @@ public class GameRoot : MonoBehaviour
         shipController.OnShipDestroy += GameOver;
 
         var bulletController = new BulletController(_weaponConfig, shipController.GetShipModel(), _collisionHandler);
-        _weaponhandler = new WeaponHandler(bulletController, _inputSystem);
+        var laserController = new LaserController(_weaponConfig, shipController.GetShipModel(), _collisionHandler);
+        _weaponInputsHandler = new WeaponInputsHandler(bulletController, laserController, _inputSystem);
 
         var asteroidController = new AsteroidController(_asteroidConfig, _collisionHandler);
 
-        _controllers = new List<IController> { shipController, bulletController, asteroidController };
+        _updatables = new List<IUpdatable> { shipController, bulletController, asteroidController, laserController, _collisionHandler };
     }
 
     private void Update()
@@ -43,11 +44,10 @@ public class GameRoot : MonoBehaviour
         if (_isGameOver)
             return;
 
-        foreach (var controller in _controllers)
+        foreach (var controller in _updatables)
         {
             controller.Update();
         }
-        _collisionHandler.Update();
     }
     
     public void GameOver()
