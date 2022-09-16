@@ -14,6 +14,7 @@ public class GameRoot : MonoBehaviour
     [SerializeField] private WeaponConfig _weaponConfig;
     [Space]
     [SerializeField] private AsteroidConfig _asteroidConfig;
+    [SerializeField] private UfoConfig _ufoConfig;
 
     private WeaponInputsHandler _weaponInputsHandler;
     private CollisionHandler _collisionHandler;
@@ -29,14 +30,16 @@ public class GameRoot : MonoBehaviour
 
         var shipController = new ShipController(_shipConfigData, _shipView, _inputSystem, _collisionHandler);
         shipController.OnShipDestroy += GameOver;
+        var shipModel = shipController.GetShipModel();
 
-        var bulletController = new BulletController(_weaponConfig, shipController.GetShipModel(), _collisionHandler);
-        var laserController = new LaserController(_weaponConfig, shipController.GetShipModel(), _collisionHandler);
+        var bulletController = new BulletController(_weaponConfig, shipModel, _collisionHandler);
+        var laserController = new LaserController(_weaponConfig, shipModel, _collisionHandler);
         _weaponInputsHandler = new WeaponInputsHandler(bulletController, laserController, _inputSystem);
 
         var asteroidController = new AsteroidController(_asteroidConfig, _collisionHandler);
+        var ufoController = new UfoController(_ufoConfig, _collisionHandler, shipModel);
 
-        _updatables = new List<IUpdatable> { shipController, bulletController, asteroidController, laserController, _collisionHandler };
+        _updatables = new List<IUpdatable> { shipController, bulletController, asteroidController, laserController, _collisionHandler, ufoController };
     }
 
     private void Update()

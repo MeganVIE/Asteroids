@@ -12,8 +12,12 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 779c06e11494cd648a9eea2f14681a86, type: 3}
   m_Name: AsteroidConfig
   m_EditorClassIdentifier: 
-  CollisionRadius: 0.5
+  BigAsteroidCollisionRadius: 0.5
   BigAsteroidViewPrefab: {fileID: 299086578185880349, guid: 17585896905eefd4dbb796a7e1074440, type: 3}
-  AsteroidSpeed: 0.1
+  BigAsteroidSpeed: 0.1
   AsteroidFirstSpawnTime: 3
   AsteroidDelaySpawnTime: 2
+  SmallAsteroidSpawnAmount: 2
+  SmallAsteroidViewPrefab: {fileID: 299086578185880349, guid: 2e18fc9538370cc45bdc65843d8718be, type: 3}
+  SmallAsteroidCollisionRadius: 0.2
+  SmallAsteroidSpeed: 0.5

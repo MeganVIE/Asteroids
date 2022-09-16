@@ -11,7 +11,7 @@ GameObject:
   - component: {fileID: 299086578185880347}
   - component: {fileID: 299086578185880349}
   m_Layer: 0
-  m_Name: BigAsteroidView
+  m_Name: SmallAsteroidView
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -149,8 +149,8 @@ SpriteRenderer:
   m_LightmapParameters: {fileID: 0}
   m_SortingLayerID: 0
   m_SortingLayer: 0
-  m_SortingOrder: 0
-  m_Sprite: {fileID: 21300000, guid: 05153ad7c59ff9740ababbe02b2a7c06, type: 3}
+  m_SortingOrder: 6
+  m_Sprite: {fileID: 21300000, guid: e4f56e074f1694a4cbaa83f9de9e64af, type: 3}
   m_Color: {r: 1, g: 1, b: 1, a: 1}
   m_FlipX: 0
   m_FlipY: 0

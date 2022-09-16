@@ -2,7 +2,7 @@
 
 namespace Enemies
 {
-    public class BigAsteroidView : View
+    public class AsteroidView : View
     {
     }
 }

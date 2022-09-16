@@ -7,8 +7,10 @@ namespace Enemies
     {
         private AsteroidConfig _asteroidConfig;
         private CollisionHandler _collisionHandler;
-        private ObjectPool<DestroyableDirectedModel, BigAsteroidView> _bigAsteroidObjectPool;
-        private Dictionary<DestroyableDirectedModel, BigAsteroidView> _bigAsteroids;
+        private ObjectPool<DestroyableDirectedModel, AsteroidView> _bigAsteroidsObjectPool;
+        private ObjectPool<DestroyableDirectedModel, AsteroidView> _smallAsteroidsObjectPool;
+        private Dictionary<DestroyableDirectedModel, AsteroidView> _bigAsteroids;
+        private Dictionary<DestroyableDirectedModel, AsteroidView> _smallAsteroids;
 
         private float _currentSpawnTime;
         private float _timer;
@@ -17,8 +19,10 @@ namespace Enemies
         {
             _collisionHandler = collisionHandler;
             _asteroidConfig = asteroidConfig;
-            _bigAsteroidObjectPool = new ObjectPool<DestroyableDirectedModel, BigAsteroidView>(_asteroidConfig.BigAsteroidViewPrefab, ObjectType.Enemy,_asteroidConfig.CollisionRadius);
-            _bigAsteroids = new Dictionary<DestroyableDirectedModel, BigAsteroidView>();
+            _bigAsteroidsObjectPool = new ObjectPool<DestroyableDirectedModel, AsteroidView>(_asteroidConfig.BigAsteroidViewPrefab, ObjectType.Enemy,_asteroidConfig.BigAsteroidCollisionRadius);
+            _smallAsteroidsObjectPool = new ObjectPool<DestroyableDirectedModel, AsteroidView>(_asteroidConfig.SmallAsteroidViewPrefab, ObjectType.Enemy, _asteroidConfig.SmallAsteroidCollisionRadius);
+            _bigAsteroids = new Dictionary<DestroyableDirectedModel, AsteroidView>();
+            _smallAsteroids = new Dictionary<DestroyableDirectedModel, AsteroidView>();
 
             _currentSpawnTime = _asteroidConfig.AsteroidFirstSpawnTime;
             _timer = 0;
@@ -28,10 +32,11 @@ namespace Enemies
         {
             Timer();
 
-            if (_bigAsteroids.Count == 0)
-                return;
+            if (_bigAsteroids.Count > 0)
+                UpdatePositions(_bigAsteroids, _asteroidConfig.BigAsteroidSpeed);
 
-            UpdatePositions();
+            if (_smallAsteroids.Count > 0)
+                UpdatePositions(_smallAsteroids, _asteroidConfig.SmallAsteroidSpeed);
         }
 
         private void Timer()
@@ -41,40 +46,64 @@ namespace Enemies
             {
                 _timer = 0;
                 _currentSpawnTime = _asteroidConfig.AsteroidDelaySpawnTime;
-                SpawnAsteroid();
+                SpawnBigAsteroid();
             }
         }
 
-        private void SpawnAsteroid()
+        private void SpawnBigAsteroid()
         {
-            _bigAsteroidObjectPool.GetModelViewPair(out DestroyableDirectedModel model, out BigAsteroidView view);
-            model.ChangePosition(CameraData.GetRandomPositionOnBound());
-            model.ChangeDirection(new Vector2(Random.value, Random.value) - model.Position);
-            view.ChangePosition(model.Position);
+            _bigAsteroidsObjectPool.GetModelViewPair(out DestroyableDirectedModel model, out AsteroidView view);
+            AsteroidModelViewSettings(model, view, CameraData.GetRandomPositionOnBound());
             _bigAsteroids.Add(model, view);
-            _collisionHandler.AddCollision(model);
-
-            model.OnDestroy += DeactivateAsteroid;
+            model.OnDestroy += DeactivateBigAsteroid;
         }
 
-        private void UpdatePositions()
+        private void SpawnSmallAsteroids(Vector2 position)
         {
-            foreach (var pair in _bigAsteroids)
+            for (int i = 0; i < _asteroidConfig.SmallAsteroidSpawnAmount; i++)
             {
-                var newPosition = pair.Key.Position + pair.Key.Direction * _asteroidConfig.AsteroidSpeed * Time.deltaTime;
+                _smallAsteroidsObjectPool.GetModelViewPair(out DestroyableDirectedModel model, out AsteroidView view);
+                AsteroidModelViewSettings(model, view, position);
+                _smallAsteroids.Add(model, view);
+                model.OnDestroy += DeactivateSmallAsteroid;
+            }
+        }
+
+        private void AsteroidModelViewSettings(DestroyableDirectedModel model, AsteroidView view, Vector2 position)
+        {
+            model.ChangePosition(position);
+            model.ChangeDirection(new Vector2(Random.value, Random.value) - model.Position);
+            view.ChangePosition(model.Position);
+            _collisionHandler.AddCollision(model);
+        }
+
+        private void UpdatePositions(Dictionary<DestroyableDirectedModel, AsteroidView> asteroids, float speed)
+        {
+            foreach (var pair in asteroids)
+            {
+                var newPosition = pair.Key.Position + pair.Key.Direction * speed * Time.deltaTime;
                 newPosition = CameraData.RepeatInViewport(newPosition);
 
                 pair.Key.ChangePosition(newPosition);
-                _bigAsteroids[pair.Key].ChangePosition(newPosition);
+                asteroids[pair.Key].ChangePosition(newPosition);
             }
         }
 
-        private void DeactivateAsteroid(DestroyableDirectedModel model)
+        private void DeactivateBigAsteroid(DestroyableDirectedModel model)
         {
-            _bigAsteroidObjectPool.DeactivateModelViewPair(model, _bigAsteroids[model]);
+            SpawnSmallAsteroids(model.Position);
+            _bigAsteroidsObjectPool.DeactivateModelViewPair(model, _bigAsteroids[model]);
             _bigAsteroids.Remove(model);
             _collisionHandler.RemoveCollision(model);
-            model.OnDestroy -= DeactivateAsteroid;
+            model.OnDestroy -= DeactivateBigAsteroid;
+        }
+
+        private void DeactivateSmallAsteroid(DestroyableDirectedModel model)
+        {
+            _smallAsteroidsObjectPool.DeactivateModelViewPair(model, _smallAsteroids[model]);
+            _smallAsteroids.Remove(model);
+            _collisionHandler.RemoveCollision(model);
+            model.OnDestroy -= DeactivateSmallAsteroid;
         }
     }
 }
