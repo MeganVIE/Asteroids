@@ -13,33 +13,39 @@ public class GameRoot : MonoBehaviour
     [SerializeField] private ShipConfig _shipConfigData;
     [SerializeField] private WeaponConfig _weaponConfig;
     [Space]
-    [SerializeField] private AsteroidConfig _asteroidConfig;
+    [SerializeField] private BigAsteroidConfig _bigAsteroidConfig;
+    [SerializeField] private SmallAsteroidConfig _smallAsteroidConfig;
     [SerializeField] private UfoConfig _ufoConfig;
 
     private WeaponInputsHandler _weaponInputsHandler;
-    private CollisionHandler _collisionHandler;
+    private CameraData _cameraData;
     private List<IUpdatable> _updatables;
 
     private bool _isGameOver;
 
     private void Start()
     {
-        CameraData.Init(Camera.main);
+        _cameraData= new CameraData(Camera.main);
         _isGameOver = false;
-        _collisionHandler = new CollisionHandler();
+        var collisionHandler = new CollisionHandler();
 
-        var shipController = new ShipController(_shipConfigData, _shipView, _inputSystem, _collisionHandler);
+        var shipController = new ShipController(_shipConfigData, _shipView, _inputSystem, collisionHandler, _cameraData);
         shipController.OnShipDestroy += GameOver;
         var shipModel = shipController.GetShipModel();
 
-        var bulletController = new BulletController(_weaponConfig, shipModel, _collisionHandler);
-        var laserController = new LaserController(_weaponConfig, shipModel, _collisionHandler);
+        var bulletController = new BulletController(_weaponConfig, shipModel, collisionHandler, _cameraData);
+        var laserController = new LaserController(_weaponConfig, shipModel, collisionHandler);
         _weaponInputsHandler = new WeaponInputsHandler(bulletController, laserController, _inputSystem);
 
-        var asteroidController = new AsteroidController(_asteroidConfig, _collisionHandler);
-        var ufoController = new UfoController(_ufoConfig, _collisionHandler, shipModel);
+        var asteroidhandler = new AsteroidHandler(_bigAsteroidConfig, _smallAsteroidConfig, collisionHandler, _cameraData);
+        var ufoController = new UfoController(_ufoConfig, collisionHandler, shipModel, _cameraData);
 
-        _updatables = new List<IUpdatable> { shipController, bulletController, asteroidController, laserController, _collisionHandler, ufoController };
+        _updatables = new List<IUpdatable> { shipController, 
+                                             bulletController,
+                                             asteroidhandler,
+                                             laserController, 
+                                             collisionHandler, 
+                                             ufoController };
     }
 
     private void Update()

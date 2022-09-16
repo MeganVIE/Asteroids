@@ -4,11 +4,13 @@ namespace Ship
 {
     public class ShipTransformHandler
     {
+        private CameraData _cameraData;
         private ShipConfig _shipConfigData;
         private Vector2 _acceleration;
 
-        public ShipTransformHandler(ShipConfig shipConfigData)
+        public ShipTransformHandler(ShipConfig shipConfigData, CameraData cameraData)
         {
+            _cameraData = cameraData;
             _shipConfigData = shipConfigData;
         }
 
@@ -32,7 +34,7 @@ namespace Ship
         public void ChangePosition(ShipModel model)
         {
             var newPosition = model.Position + _acceleration;
-            newPosition = CameraData.RepeatInViewport(newPosition);
+            newPosition = _cameraData.RepeatInViewport(newPosition);
 
             model.ChangePosition(newPosition);
         }

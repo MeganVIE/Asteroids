@@ -334,7 +334,8 @@ MonoBehaviour:
   _shipView: {fileID: 1568473720}
   _shipConfigData: {fileID: 11400000, guid: 87d1d69d997c324418560adc7d3ec80e, type: 2}
   _weaponConfig: {fileID: 11400000, guid: 9c0d2378ca55e4242b3133a2fe51d173, type: 2}
-  _asteroidConfig: {fileID: 11400000, guid: 414467011255e1f44a51d7bc11fb01e4, type: 2}
+  _bigAsteroidConfig: {fileID: 11400000, guid: 414467011255e1f44a51d7bc11fb01e4, type: 2}
+  _smallAsteroidConfig: {fileID: 11400000, guid: 55c1e1e96f7ea9c40bd3ce3c74555bce, type: 2}
   _ufoConfig: {fileID: 11400000, guid: 546aa7cb56700d044bf3e1ca945e7556, type: 2}
 --- !u!4 &1899571409
 Transform:

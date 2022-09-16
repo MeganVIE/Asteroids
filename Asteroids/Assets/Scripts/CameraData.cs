@@ -2,28 +2,28 @@
 
 public class CameraData
 {
-    private static float _halfViewportHeight;
-    private static float _halfViewportWidth;
+    private float _halfViewportHeight;
+    private float _halfViewportWidth;
 
-    public static void Init(Camera camera)
+    public CameraData(Camera camera)
     {
         _halfViewportHeight = Camera.main.orthographicSize;
         _halfViewportWidth = _halfViewportHeight * Camera.main.aspect;
     }
 
-    public static bool IsOutsideViewport(Vector2 position)
+    public bool IsOutsideViewport(Vector2 position)
     {
         return (Mathf.Abs(position.y) > _halfViewportHeight) || (Mathf.Abs(position.x) > _halfViewportWidth);
     }
 
-    public static Vector2 RepeatInViewport(Vector2 position)
+    public Vector2 RepeatInViewport(Vector2 position)
     {
         position.x = position.x > _halfViewportWidth ? -_halfViewportWidth : position.x < -_halfViewportWidth ? _halfViewportWidth : position.x;
         position.y = position.y > _halfViewportHeight ? -_halfViewportHeight : position.y < -_halfViewportHeight ? _halfViewportHeight : position.y;
         return position;
     }
 
-    public static Vector2 GetRandomPositionOnBound()
+    public Vector2 GetRandomPositionOnBound()
     {
         Vector2 position;
         if (Random.Range(0, 2) == 0)

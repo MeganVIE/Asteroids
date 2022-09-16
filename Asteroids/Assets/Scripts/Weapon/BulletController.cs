@@ -4,12 +4,14 @@ using Ship;
 
 namespace Weapon
 {
-    public class BulletController : BaseBulletHandler<DestroyableDirectedModel, BulletView>, IUpdatable
+    public class BulletController : BaseBulletHandler<DestroyableDirectedModel, View>, IUpdatable
     {
-        public BulletController(WeaponConfig weaponConfig, ShipModel model, CollisionHandler collisionHandler) :
+        private CameraData _cameraData;
+        public BulletController(WeaponConfig weaponConfig, ShipModel model, CollisionHandler collisionHandler, CameraData cameraData) :
             base(weaponConfig, model, collisionHandler)
         {
-            _bulletObjectPool = new ObjectPool<DestroyableDirectedModel, BulletView>(_weaponConfig.BulletViewPrefab, ObjectType.Bullet,_weaponConfig.BulletCollisionRadius);
+            _cameraData = cameraData;
+            _bulletObjectPool = new ObjectPool<DestroyableDirectedModel, View>(_weaponConfig.ViewPrefab, ObjectType.Bullet,_weaponConfig.CollisionRadius);
         }
 
         void IUpdatable.Update()
@@ -22,12 +24,12 @@ namespace Weapon
             {
                 UpdateBulletPosition(bulletModels[i], out Vector2 newPosition);
 
-                if (CameraData.IsOutsideViewport(newPosition))
+                if (_cameraData.IsOutsideViewport(newPosition))
                     DeactivateBullet(bulletModels[i]);
             }
         }
 
-        protected override void ModelViewSettings(DestroyableDirectedModel model, BulletView view)
+        protected override void ModelViewSettings(DestroyableDirectedModel model, View view)
         {
             base.ModelViewSettings(model, view);
             model.OnDestroy += DeactivateBullet;
@@ -41,7 +43,7 @@ namespace Weapon
 
         private void UpdateBulletPosition(DestroyableDirectedModel model, out Vector2 newPosition)
         {
-            newPosition = model.Position + model.Direction * _weaponConfig.BulletSpeed * Time.deltaTime;
+            newPosition = model.Position + model.Direction * _weaponConfig.Speed * Time.deltaTime;
             model.ChangePosition(newPosition);
             _bullets[model].ChangePosition(newPosition);
         }

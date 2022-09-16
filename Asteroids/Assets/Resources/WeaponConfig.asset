@@ -12,10 +12,11 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 35e43fd854e24c443a20066836c1000f, type: 3}
   m_Name: WeaponConfig
   m_EditorClassIdentifier: 
-  BulletSpeed: 3
-  BulletViewPrefab: {fileID: 3394412864412449009, guid: a03348189c353d746b87b86e6018030a, type: 3}
   CollisionRadius: 0.05
+  ViewPrefab: {fileID: 3394412864412449009, guid: a03348189c353d746b87b86e6018030a, type: 3}
+  Speed: 3
   LaserViewPrefab: {fileID: 1583973771166044394, guid: dba5341deae5d024e9991d7712d26117, type: 3}
+  LaserCollisionRadius: 10
   LaserLifeTime: 1
   LaserMaxAmount: 5
   LaserAmountRechargeTime: 2

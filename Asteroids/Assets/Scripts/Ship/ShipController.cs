@@ -13,9 +13,9 @@ namespace Ship
 
         public System.Action OnShipDestroy { get; set; }
 
-        public ShipController(ShipConfig shipConfig, ShipView view, IMoveRotateInputData inputs, CollisionHandler collisionHandler)
+        public ShipController(ShipConfig shipConfig, ShipView view, IMoveRotateInputData inputs, CollisionHandler collisionHandler, CameraData cameraData)
         {
-            _shipTransformHandler = new ShipTransformHandler(shipConfig);
+            _shipTransformHandler = new ShipTransformHandler(shipConfig, cameraData);
             _inputSystem = inputs;
 
             _model = new ShipModel(shipConfig.StartPosition, shipConfig.CollisionRadius);

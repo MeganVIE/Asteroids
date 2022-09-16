@@ -3,12 +3,9 @@
 namespace Weapon
 {
     [CreateAssetMenu(fileName = "NewWeaponConfig", menuName = "Weapon Config", order = 11)]
-    public class WeaponConfig : ScriptableObject
+    public class WeaponConfig : SpawnObjectConfig
     {
-        public float BulletSpeed = 3;
-        public BulletView BulletViewPrefab;
-        public float BulletCollisionRadius = .05f;
-
+        [Space]
         public LaserView LaserViewPrefab;
         public float LaserCollisionRadius = 10f;
         public float LaserLifeTime = 1f;
