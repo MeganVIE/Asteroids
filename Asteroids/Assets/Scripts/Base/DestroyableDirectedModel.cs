@@ -1,12 +1,13 @@
-﻿using System;
+﻿using UnityEngine.Events;
 
 public class DestroyableDirectedModel : DirectedModel
 {
-    public Action<DestroyableDirectedModel> OnDestroy { get; set; }
+    public UnityEvent<DestroyableDirectedModel> OnDestroy { get; set; }
 
     public DestroyableDirectedModel()
     {
-        OnCollision += CollisionHandler;
+        OnCollision.AddListener(CollisionHandler);
+        OnDestroy = new UnityEvent<DestroyableDirectedModel>();
     }
     public override bool Collision(CollisionModel targetModel)
     {
@@ -16,6 +17,12 @@ public class DestroyableDirectedModel : DirectedModel
     private void CollisionHandler()
     {
         OnDestroy?.Invoke(this);
+    }
+
+    public override void Clear()
+    {
+        base.Clear();
+        OnDestroy.RemoveAllListeners();
     }
 }
 

@@ -1,5 +1,4 @@
 ﻿using System.Collections.Generic;
-using UnityEngine;
 
 public class CollisionHandler : IUpdatable
 {
@@ -58,5 +57,10 @@ public class CollisionHandler : IUpdatable
                 }
             }
         }
+    }
+    void IUpdatable.Clear()
+    {
+        _collisionsMap.Clear();
+        _collisionObjects.Clear();
     }
 }

@@ -38,7 +38,7 @@ public class GameRoot : MonoBehaviour
 
         var collisionHandler = new CollisionHandler();
         _shipController = new ShipController(_shipConfigData, _shipView, _inputSystem, collisionHandler, _cameraData);
-        _shipController.OnShipDestroy += GameOver;
+        _shipController.OnShipDestroy.AddListener(GameOver);
         var shipModel = _shipController.GetShipModel();
 
         var bulletController = new BulletController(_weaponConfig, shipModel, collisionHandler, _cameraData);
@@ -46,9 +46,9 @@ public class GameRoot : MonoBehaviour
         _weaponInputsHandler = new WeaponInputsHandler(bulletController, _laserController, _inputSystem);
 
         var asteroidhandler = new AsteroidHandler(_bigAsteroidConfig, _smallAsteroidConfig, collisionHandler, _cameraData);
-        asteroidhandler.OnEnemyDestroyed += AddPoints;
+        asteroidhandler.OnEnemyDestroyed.AddListener(AddPoints);
         var ufoController = new UfoController(_ufoConfig, collisionHandler, shipModel, _cameraData);
-        ufoController.OnEnemyDestroyed += AddPoints;
+        ufoController.OnEnemyDestroyed.AddListener(AddPoints);
 
         _updatables = new List<IUpdatable> { _shipController, 
                                              bulletController,
@@ -60,7 +60,7 @@ public class GameRoot : MonoBehaviour
 
     private void Update()
     {
-        if (_isGameOver)
+        if (_isGameOver || _updatables == null)
             return;
 
         foreach (var controller in _updatables)
@@ -73,6 +73,17 @@ public class GameRoot : MonoBehaviour
                                        _shipController.GetCurrentSpeed(),
                                        _laserController.CurrentAmount,
                                        _laserController.RechargeTime);
+    }
+
+    private void OnDestroy()
+    {
+        if (_updatables == null)
+            return;
+
+        foreach (var controller in _updatables)
+        {
+            controller.Clear();
+        }
     }
 
     private void AddPoints(Enemy model) => _score += model.Points;

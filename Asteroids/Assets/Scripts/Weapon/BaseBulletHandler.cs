@@ -4,7 +4,7 @@ using Ship;
 
 namespace Weapon
 {
-    public class BaseBulletHandler<T1, T2> where T1 : DirectedModel, new() where T2: View
+    public abstract class BaseBulletHandler<T1, T2> : IUpdatable where T1 : DirectedModel, new() where T2: View
     {
         private CollisionHandler _collisionHandler;
 
@@ -20,6 +20,13 @@ namespace Weapon
             _weaponConfig = weaponConfig;
 
             _bullets = new Dictionary<T1, T2>();
+        }
+
+        public abstract void Update();
+        public virtual void Clear()
+        {
+            _bulletObjectPool.Clear();
+            _bullets.Clear();
         }
 
         public void CreateBullet()

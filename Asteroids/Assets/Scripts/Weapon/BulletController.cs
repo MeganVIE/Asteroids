@@ -4,7 +4,7 @@ using Ship;
 
 namespace Weapon
 {
-    public class BulletController : BaseBulletHandler<DestroyableDirectedModel, View>, IUpdatable
+    public class BulletController : BaseBulletHandler<DestroyableDirectedModel, View>
     {
         private CameraData _cameraData;
         public BulletController(WeaponConfig weaponConfig, ShipModel model, CollisionHandler collisionHandler, CameraData cameraData) :
@@ -14,7 +14,7 @@ namespace Weapon
             _bulletObjectPool = new ObjectPool<DestroyableDirectedModel, View>(_weaponConfig.ViewPrefab, ObjectType.Bullet,_weaponConfig.CollisionRadius);
         }
 
-        void IUpdatable.Update()
+        public override void Update()
         {
             if (_bullets.Count == 0)
                 return;
@@ -32,13 +32,13 @@ namespace Weapon
         protected override void ModelViewSettings(DestroyableDirectedModel model, View view)
         {
             base.ModelViewSettings(model, view);
-            model.OnDestroy += DeactivateBullet;
+            model.OnDestroy.AddListener(DeactivateBullet);
         }
 
         protected override void DeactivateBullet(DestroyableDirectedModel model)
         {
             base.DeactivateBullet(model);
-            model.OnDestroy -= DeactivateBullet;
+            model.OnDestroy.RemoveListener(DeactivateBullet);
         }
 
         private void UpdateBulletPosition(DestroyableDirectedModel model, out Vector2 newPosition)

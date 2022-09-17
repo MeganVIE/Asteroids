@@ -2,18 +2,6 @@ using UnityEngine;
 using UnityEngine.Events;
 using UnityEngine.InputSystem;
 
-public interface IMoveRotateInputData
-{
-    float RotationValue { get;}
-    InputActionPhase MoveForwardPhase { get;}
-}
-
-public interface IWeaponUseInputData
-{
-    UnityEvent onGunUse { get;}
-    UnityEvent onLaserUse { get;}
-}
-
 public class InputSystem : MonoBehaviour, IMoveRotateInputData, IWeaponUseInputData
 {
     #region Activation
@@ -23,6 +11,8 @@ public class InputSystem : MonoBehaviour, IMoveRotateInputData, IWeaponUseInputD
     {
         if (_actionAsset != null)
             _actionAsset.Enable();
+
+        Init();
     }
     #endregion
 
@@ -41,7 +31,7 @@ public class InputSystem : MonoBehaviour, IMoveRotateInputData, IWeaponUseInputD
     public UnityEvent onGunUse => _onGunUse;
     public UnityEvent onLaserUse => _onLaserUse;
 
-    private void Start()
+    private void Init()
     {
         _gunUse.action.performed += GunUsePerformed;
         _laserUse.action.performed += LaserUsePerformed;

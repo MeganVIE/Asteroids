@@ -2,7 +2,7 @@
 using System.Linq;
 using UnityEngine;
 
-public class ObjectPool<T1,T2> where T1 : CollisionModel, new() where T2 : MonoBehaviour
+public class ObjectPool<T1,T2> where T1 : CollisionModel, new() where T2 : View
 {
     private T2 _prefab;
     private ObjectType _type;
@@ -15,6 +15,16 @@ public class ObjectPool<T1,T2> where T1 : CollisionModel, new() where T2 : MonoB
         _type = type;
         _radius = radius;
         _unusedObjects = new Dictionary<T1, T2>();
+    }
+
+    public void Clear()
+    {
+        foreach (var pair in _unusedObjects)
+        {
+            pair.Key.Clear();
+            Object.Destroy(pair.Value);
+        }
+        _unusedObjects.Clear();
     }
 
     public void GetModelViewPair(out T1 model, out T2 view)

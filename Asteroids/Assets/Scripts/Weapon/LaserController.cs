@@ -26,28 +26,43 @@ namespace Weapon
             _lasersCurrentAmount = _weaponConfig.LaserMaxAmount;
         }
 
-        void IUpdatable.Update()
+        public override void Update()
         {
-            if (_bullets.Count > 0)
-            {
-                foreach (var model in _laserTimers.Keys.ToArray())
-                {
-                    _laserTimers[model] += Time.deltaTime;
-                    if (_laserTimers[model] >= _weaponConfig.LaserLifeTime)
-                        DeactivateLaser(model);
-                }
-            }
+            TimersUpdate();
+            LaserRecharge();
+        }
+        public override void Clear()
+        {
+            base.Clear();
+            _laserTimers.Clear();
+        }
 
-            if (_lasersCurrentAmount < _weaponConfig.LaserMaxAmount)
+        private void TimersUpdate()
+        {
+            if (_bullets.Count == 0)
+                return;
+
+            foreach (var model in _laserTimers.Keys.ToArray())
             {
-                _rechargeTimer += Time.deltaTime;
-                if (_rechargeTimer >= _weaponConfig.LaserAmountRechargeTime)
-                {
-                    _rechargeTimer = 0;
-                    _lasersCurrentAmount++;
-                }
+                _laserTimers[model] += Time.deltaTime;
+                if (_laserTimers[model] >= _weaponConfig.LaserLifeTime)
+                    DeactivateLaser(model);
             }
         }
+
+        private void LaserRecharge()
+        {
+            if (_lasersCurrentAmount >= _weaponConfig.LaserMaxAmount)
+                return;
+
+            _rechargeTimer += Time.deltaTime;
+            if (_rechargeTimer >= _weaponConfig.LaserAmountRechargeTime)
+            {
+                _rechargeTimer = 0;
+                _lasersCurrentAmount++;
+            }
+        }
+
         protected override void ModelViewSettings(LaserModel model, LaserView view)
         {
             base.ModelViewSettings(model, view);

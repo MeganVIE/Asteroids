@@ -1,0 +1,18 @@
+{
+    "name": "ShipAssembly",
+    "rootNamespace": "",
+    "references": [
+        "GUID:bbff5564a1db4ec479f2852b416ef13d",
+        "GUID:0c681f2a30c57144ab9f2ff3ab73a76c",
+        "GUID:75469ad4d38634e559750d17036d5f7c"
+    ],
+    "includePlatforms": [],
+    "excludePlatforms": [],
+    "allowUnsafeCode": false,
+    "overrideReferences": false,
+    "precompiledReferences": [],
+    "autoReferenced": true,
+    "defineConstraints": [],
+    "versionDefines": [],
+    "noEngineReferences": false
+}
