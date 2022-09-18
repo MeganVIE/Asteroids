@@ -9,8 +9,7 @@ public class GameRoot : MonoBehaviour
 {
     [SerializeField] private InputSystem _inputSystem;
     [Space]
-    [SerializeField] private ShipView _shipView;
-    [SerializeField] private ShipConfig _shipConfigData;
+    [SerializeField] private ShipConfig _shipConfig;
     [SerializeField] private WeaponConfig _weaponConfig;
     [Space]
     [SerializeField] private BigAsteroidConfig _bigAsteroidConfig;
@@ -37,7 +36,7 @@ public class GameRoot : MonoBehaviour
         _score = 0;
 
         var collisionHandler = new CollisionHandler();
-        _shipController = new ShipController(_shipConfigData, _shipView, _inputSystem, collisionHandler, _cameraData);
+        _shipController = new ShipController(_shipConfig, _inputSystem, collisionHandler, _cameraData);
         _shipController.OnShipDestroy.AddListener(GameOver);
         var shipModel = _shipController.GetShipModel();
 

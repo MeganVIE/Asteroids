@@ -14,18 +14,21 @@ namespace Ship
 
         public UnityEvent OnShipDestroy { get; private set; }
 
-        public ShipController(ShipConfig shipConfig, ShipView view, IMoveRotateInputData inputs, CollisionHandler collisionHandler, CameraData cameraData)
+        public ShipController(ShipConfig shipConfig, IMoveRotateInputData inputs, CollisionHandler collisionHandler, CameraData cameraData)
         {
             _shipTransformHandler = new ShipTransformHandler(shipConfig, cameraData);
             _inputSystem = inputs;
 
             _model = new ShipModel(shipConfig.StartPosition, shipConfig.CollisionRadius);
-            _view = view;
+            _view = Object.Instantiate(shipConfig.ViewPrefab);
             _collisionHandler = collisionHandler;
             _collisionHandler.AddCollision(_model);
 
             OnShipDestroy = new UnityEvent();
             _model.OnCollision.AddListener(onShipCollision);
+
+            UpdatePosition();
+            UpdateRotation();
         }
 
         public float GetCurrentSpeed() => _shipTransformHandler.CurrentSpeed;

@@ -12,6 +12,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: f60531c6b61297d40bd009eacb479107, type: 3}
   m_Name: ShipConfig
   m_EditorClassIdentifier: 
+  ViewPrefab: {fileID: 4704229537066865304, guid: e3310effa60d58e4685d602571bb0db2, type: 3}
   CollisionRadius: 0.3
   MaxSpeed: 0.015
   AccelerationSpeed: 0.005

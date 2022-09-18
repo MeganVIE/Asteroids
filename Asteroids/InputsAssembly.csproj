@@ -56,9 +56,9 @@
     <Analyzer Include="C:\Program Files (x86)\Microsoft Visual Studio Tools for Unity\16.0\Analyzers\Microsoft.Unity.Analyzers.dll" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Assets\Scripts\Inputs\InputSystem.cs" />
-    <Compile Include="Assets\Scripts\Inputs\IMoveRotateInputData.cs" />
     <Compile Include="Assets\Scripts\Inputs\IWeaponUseInputData.cs" />
+    <Compile Include="Assets\Scripts\Inputs\IMoveRotateInputData.cs" />
+    <Compile Include="Assets\Scripts\Inputs\InputSystem.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="Assets\Scripts\Inputs\InputsAssembly.asmdef" />
