@@ -18,24 +18,30 @@ public class CameraData
 
     public Vector2 RepeatInViewport(Vector2 position)
     {
-        position.x = position.x > _halfViewportWidth ? -_halfViewportWidth : position.x < -_halfViewportWidth ? _halfViewportWidth : position.x;
-        position.y = position.y > _halfViewportHeight ? -_halfViewportHeight : position.y < -_halfViewportHeight ? _halfViewportHeight : position.y;
+        RepeatInViewportVectorComponent(ref position.x, _halfViewportWidth);
+        RepeatInViewportVectorComponent(ref position.y, _halfViewportHeight);
         return position;
     }
 
     public Vector2 GetRandomPositionOnBound()
     {
         Vector2 position;
-        if (Random.Range(0, 2) == 0)
-        {
-            position.x = Random.Range(0, 2) == 0 ? _halfViewportWidth : -_halfViewportWidth;
-            position.y = Random.Range(-_halfViewportHeight, _halfViewportHeight);
-        }
+        if (GetRandomFiftyFifty())
+            SetVectorComponentsValue(out position.x, out position.y, _halfViewportWidth, _halfViewportHeight);
         else
-        {
-            position.x = Random.Range(-_halfViewportWidth, _halfViewportWidth);
-            position.y = Random.Range(0, 2) == 0 ? _halfViewportHeight : -_halfViewportHeight;
-        }
+            SetVectorComponentsValue(out position.y, out position.x, _halfViewportHeight, _halfViewportWidth);
         return position;
+    }
+
+    private bool GetRandomFiftyFifty() => Random.Range(0, 2) == 0;
+    private void SetVectorComponentsValue(out float componentA, out float componentB, float limitA, float limitB)
+    {
+        componentA = GetRandomFiftyFifty() ? limitA : -limitA;
+        componentB = Random.Range(-limitB, limitB);
+    }
+
+    private void RepeatInViewportVectorComponent(ref float component, float limit)
+    {
+        component = component > limit ? -limit : component < -limit ? limit : component;
     }
 }

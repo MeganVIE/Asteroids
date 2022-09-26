@@ -9,7 +9,7 @@ public class DestroyableDirectedModel : DirectedModel
         OnCollision.AddListener(CollisionHandler);
         OnDestroy = new UnityEvent<DestroyableDirectedModel>();
     }
-    public override bool Collision(CollisionModel targetModel)
+    public override bool HasCollision(CollisionModel targetModel)
     {
         return (Position - targetModel.Position).magnitude < CollisionRadius + targetModel.CollisionRadius;
     }

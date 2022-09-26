@@ -11,7 +11,7 @@ public class CollisionHandler : IUpdatable
         {
             [ObjectType.Ship] = ObjectType.Enemy,
             [ObjectType.Bullet] = ObjectType.Enemy,
-            [ObjectType.Laser]=ObjectType.Enemy
+            [ObjectType.Laser] = ObjectType.Enemy
         };
     }
 
@@ -31,6 +31,16 @@ public class CollisionHandler : IUpdatable
 
     void IUpdatable.Update()
     {
+        CheckCollisions();
+    }
+    void IUpdatable.Clear()
+    {
+        _collisionsMap.Clear();
+        _collisionObjects.Clear();
+    }
+
+    private void CheckCollisions()
+    {
         foreach (var pair in _collisionsMap)
         {
             if (!_collisionObjects.ContainsKey(pair.Key))
@@ -43,24 +53,19 @@ public class CollisionHandler : IUpdatable
                     continue;
                 var targets = _collisionObjects[pair.Value];
 
-                for (int i = 0; j>=0 && i < targets.Count; i++)
+                for (int i = 0; j >= 0 && i < targets.Count; i++)
                 {
-                    if (mains[j].Collision(targets[i]))
+                    if (mains[j].HasCollision(targets[i]))
                     {
                         var main = mains[j];
                         main.OnCollision?.Invoke();
                         targets[i--].OnCollision?.Invoke();
 
                         if (main.ObjectCollisionType != ObjectType.Laser)
-                            j--;                            
+                            j--;
                     }
                 }
             }
         }
-    }
-    void IUpdatable.Clear()
-    {
-        _collisionsMap.Clear();
-        _collisionObjects.Clear();
     }
 }

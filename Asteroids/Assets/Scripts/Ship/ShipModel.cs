@@ -14,7 +14,7 @@ namespace Ship
 
         public void ChangeRotation(float newRotation) => Rotation = newRotation;
 
-        public override bool Collision(CollisionModel targetModel)
+        public override bool HasCollision(CollisionModel targetModel)
         {
             return (Position - targetModel.Position).magnitude < CollisionRadius + targetModel.CollisionRadius;
         }

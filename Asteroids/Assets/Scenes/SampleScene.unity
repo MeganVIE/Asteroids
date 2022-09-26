@@ -1452,7 +1452,7 @@ Canvas:
   m_SortingBucketNormalizedSize: 0
   m_AdditionalShaderChannelsFlag: 25
   m_SortingLayerID: 0
-  m_SortingOrder: 0
+  m_SortingOrder: 10
   m_TargetDisplay: 0
 --- !u!224 &855098246
 RectTransform:
@@ -2186,6 +2186,9 @@ MonoBehaviour:
   _speedValueText: {fileID: 657875481}
   _lasersAmountValueText: {fileID: 526883617}
   _laserRechargeValueText: {fileID: 188868461}
+  _angleRoundDigits: 2
+  _speedRoundDigits: 3
+  _laserRechargeRoundDigits: 2
 --- !u!1 &1426796378
 GameObject:
   m_ObjectHideFlags: 0

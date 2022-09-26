@@ -19,7 +19,7 @@ public abstract class CollisionModel
         CollisionRadius = radius;
         ObjectCollisionType = type;
     }
-    public abstract bool Collision(CollisionModel targetModel);
+    public abstract bool HasCollision(CollisionModel targetModel);
 
     public virtual void Clear()
     {

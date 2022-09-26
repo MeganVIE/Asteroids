@@ -4,7 +4,7 @@ namespace Weapon
 {
     public class LaserModel : DirectedModel
     {
-        public override bool Collision(CollisionModel targetModel)
+        public override bool HasCollision(CollisionModel targetModel)
         {
             var projectPoint = Position + Direction * Vector2.Dot(targetModel.Position - Position, Direction) / Vector2.Dot(Direction, Direction);
             var perpendicularSqrLength = (projectPoint - targetModel.Position).sqrMagnitude;
