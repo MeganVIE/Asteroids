@@ -1,7 +1,7 @@
-﻿using UnityEngine.Events;
+﻿using System;
 
 public interface IWeaponUseInputData
 {
-    UnityEvent onGunUse { get;}
-    UnityEvent onLaserUse { get;}
+    Action onGunUse { get; set; }
+    Action onLaserUse { get; set; }
 }

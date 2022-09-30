@@ -1,17 +1,12 @@
-﻿using UnityEngine;
-using UnityEngine.Events;
+﻿using System;
+using UnityEngine;
 
 public abstract class CollisionModel
 {
     public Vector2 Position { get; private set; }
     public float CollisionRadius { get; private set; }
     public ObjectType ObjectCollisionType { get; private set; }
-    public UnityEvent OnCollision { get; private set; }
-
-    public CollisionModel()
-    {
-        OnCollision = new UnityEvent();
-    }
+    public Action OnCollision { get; set; }
 
     public void ChangePosition(Vector2 newPosition) => Position = newPosition;
     public void SetCollisionData(float radius, ObjectType type)
@@ -20,11 +15,6 @@ public abstract class CollisionModel
         ObjectCollisionType = type;
     }
     public abstract bool HasCollision(CollisionModel targetModel);
-
-    public virtual void Clear()
-    {
-        OnCollision.RemoveAllListeners();
-    }
 }
 
 public enum ObjectType

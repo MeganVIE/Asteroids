@@ -1,6 +1,6 @@
 ﻿using System.Collections.Generic;
 
-public class CollisionHandler : IUpdatable
+public class CollisionHandler : IUpdatable, IClearable
 {
     private Dictionary<ObjectType, ObjectType> _collisionsMap;
     private Dictionary<ObjectType, List<CollisionModel>> _collisionObjects;
@@ -33,7 +33,7 @@ public class CollisionHandler : IUpdatable
     {
         CheckCollisions();
     }
-    void IUpdatable.Clear()
+    void IClearable.Clear()
     {
         _collisionsMap.Clear();
         _collisionObjects.Clear();

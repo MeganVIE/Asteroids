@@ -22,8 +22,14 @@ public class GameRoot : MonoBehaviour
     private ShipController _shipController;
     private LaserController _laserController;
     private WeaponInputsHandler _weaponInputsHandler;
+
+    private AsteroidHandler _asteroidhandler;
+    private UfoController _ufoController;
+
     private CameraData _cameraData;
+
     private List<IUpdatable> _updatables;
+    private List<IClearable> _clearables;
 
     private bool _isGameOver;
     private int _score;
@@ -37,24 +43,32 @@ public class GameRoot : MonoBehaviour
 
         var collisionHandler = new CollisionHandler();
         _shipController = new ShipController(_shipConfig, _inputSystem, collisionHandler, _cameraData);
-        _shipController.OnShipDestroy.AddListener(GameOver);
+        _shipController.OnShipDestroy += GameOver;
         var shipModel = _shipController.GetShipModel();
 
         var bulletController = new BulletController(_weaponConfig, shipModel, collisionHandler, _cameraData);
         _laserController = new LaserController(_weaponConfig, shipModel, collisionHandler);
         _weaponInputsHandler = new WeaponInputsHandler(bulletController, _laserController, _inputSystem);
 
-        var asteroidhandler = new AsteroidHandler(_bigAsteroidConfig, _smallAsteroidConfig, collisionHandler, _cameraData);
-        asteroidhandler.OnEnemyDestroyed.AddListener(AddPoints);
-        var ufoController = new UfoController(_ufoConfig, collisionHandler, shipModel, _cameraData);
-        ufoController.OnEnemyDestroyed.AddListener(AddPoints);
+        _asteroidhandler = new AsteroidHandler(_bigAsteroidConfig, _smallAsteroidConfig, collisionHandler, _cameraData);
+        _asteroidhandler.OnEnemyDestroyed += AddPoints;
+        _ufoController = new UfoController(_ufoConfig, collisionHandler, shipModel, _cameraData);
+        _ufoController.OnEnemyDestroyed += AddPoints;
 
         _updatables = new List<IUpdatable> { _shipController, 
                                              bulletController,
-                                             asteroidhandler,
+                                             _asteroidhandler,
                                              _laserController, 
-                                             collisionHandler, 
-                                             ufoController };
+                                             collisionHandler,
+                                             _ufoController };
+        _clearables = new List<IClearable>{ _shipController,
+                                             bulletController,
+                                             _asteroidhandler,
+                                             _laserController,
+                                             collisionHandler,
+                                             _ufoController,
+                                            _weaponInputsHandler};
+
     }
 
     private void Update()
@@ -79,7 +93,7 @@ public class GameRoot : MonoBehaviour
         if (_updatables == null)
             return;
 
-        foreach (var controller in _updatables)
+        foreach (var controller in _clearables)
         {
             controller.Clear();
         }
@@ -91,5 +105,9 @@ public class GameRoot : MonoBehaviour
     {
         _isGameOver = true;
         _gameOverPanel.Show(_score);
+
+        _shipController.OnShipDestroy -= GameOver;
+        _asteroidhandler.OnEnemyDestroyed -= AddPoints;
+        _ufoController.OnEnemyDestroyed -= AddPoints;
     }
 }

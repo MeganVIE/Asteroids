@@ -1,9 +1,8 @@
 using UnityEngine;
-using UnityEngine.Events;
 
 namespace Ship
 {
-    public class ShipController : IUpdatable
+    public class ShipController : IUpdatable, IClearable
     {
         private IMoveRotateInputData _inputSystem;
 
@@ -12,7 +11,7 @@ namespace Ship
         private ShipTransformHandler _shipTransformHandler;
         private CollisionHandler _collisionHandler;
 
-        public UnityEvent OnShipDestroy { get; private set; }
+        public System.Action OnShipDestroy { get; set; }
 
         public ShipController(ShipConfig shipConfig, IMoveRotateInputData inputs, CollisionHandler collisionHandler, CameraData cameraData)
         {
@@ -24,8 +23,7 @@ namespace Ship
             _collisionHandler = collisionHandler;
             _collisionHandler.AddCollision(_model);
 
-            OnShipDestroy = new UnityEvent();
-            _model.OnCollision.AddListener(onShipCollision);
+            _model.OnCollision += onShipCollision;
 
             UpdatePosition();
             UpdateRotation();
@@ -42,10 +40,9 @@ namespace Ship
                 return;
             UpdateRotation();
         }
-        void IUpdatable.Clear()
+        void IClearable.Clear()
         {
-            OnShipDestroy.RemoveAllListeners();
-            _model.Clear();
+            _model.OnCollision -= onShipCollision;
         }
 
         public ShipModel GetShipModel() => _model;
@@ -53,7 +50,6 @@ namespace Ship
         private void onShipCollision()
         {
             OnShipDestroy?.Invoke();
-            _model.OnCollision.RemoveListener(onShipCollision);
         }
 
         private void UpdateAcceleration()

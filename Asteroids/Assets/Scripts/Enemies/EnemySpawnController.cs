@@ -1,30 +1,27 @@
 ﻿using System.Collections.Generic;
 using UnityEngine;
-using UnityEngine.Events;
 
 namespace Enemies
 {
-    public class EnemySpawnController: IUpdatable
+    public class EnemySpawnController: IUpdatable, IClearable
     {
         protected CameraData _cameraData;
         protected ObjectPointsConfig _enemyConfig;
         private CollisionHandler _collisionHandler;
         private DirectedModelTransformHandler _transformHandler;
 
-        private ObjectPool<Enemy, View> _enemiesObjectPool;
+        private DestroyableObjectPool<Enemy, View> _enemiesObjectPool;
         private Dictionary<Enemy, View> _enemies;
 
-        public UnityEvent<Enemy> OnEnemyDestroyed;
+        public System.Action<Enemy> OnEnemyDestroyed;
         public EnemySpawnController(ObjectPointsConfig config, CollisionHandler collisionHandler, CameraData cameraData)
         {
             _cameraData = cameraData;
             _collisionHandler = collisionHandler;
             _enemyConfig = config;
             _transformHandler = new DirectedModelTransformHandler();
-            _enemiesObjectPool = new ObjectPool<Enemy, View>(_enemyConfig.ViewPrefab, ObjectType.Enemy, _enemyConfig.CollisionRadius);
+            _enemiesObjectPool = new DestroyableObjectPool<Enemy, View>(_enemyConfig.ViewPrefab, ObjectType.Enemy, _enemyConfig.CollisionRadius);
             _enemies = new Dictionary<Enemy, View>();
-
-            OnEnemyDestroyed = new UnityEvent<Enemy>();
         }
 
         public virtual void Update()
@@ -33,7 +30,6 @@ namespace Enemies
         }
         public void Clear()
         {
-            OnEnemyDestroyed.RemoveAllListeners();
             _enemies.Clear();
             _enemiesObjectPool.Clear();
         }
@@ -63,7 +59,7 @@ namespace Enemies
             _enemiesObjectPool.GetModelViewPair(out Enemy model, out View view);
             EnemyModelViewSettings(model, view, position);
             _enemies.Add(model, view);
-            model.OnDestroy.AddListener(DeactivateEnemy);
+            model.OnDestroy += DeactivateEnemy;
         }
 
         private void EnemyModelViewSettings(Enemy model, View view, Vector2 position)
@@ -81,7 +77,7 @@ namespace Enemies
             _enemiesObjectPool.DeactivateModelViewPair(enemyModel, _enemies[enemyModel]);
             _enemies.Remove(enemyModel);
             _collisionHandler.RemoveCollision(model);
-            model.OnDestroy.RemoveListener(DeactivateEnemy);
+            model.OnDestroy -= DeactivateEnemy;
             OnEnemyDestroyed?.Invoke(enemyModel);
         }
     }

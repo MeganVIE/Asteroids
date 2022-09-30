@@ -21,8 +21,9 @@ public class ObjectPool<T1,T2> where T1 : CollisionModel, new() where T2 : View
     {
         foreach (var pair in _unusedObjects)
         {
-            pair.Key.Clear();
-            Object.Destroy(pair.Value);
+            OnPairClear(pair);
+            //pair.Key.Clear();
+            //Object.Destroy(pair.Value);
         }
         _unusedObjects.Clear();
     }
@@ -48,5 +49,10 @@ public class ObjectPool<T1,T2> where T1 : CollisionModel, new() where T2 : View
     {
         _unusedObjects.Add(model, view);
         view.gameObject.SetActive(false);
+    }
+
+    protected virtual void OnPairClear(KeyValuePair<T1, T2> pair)
+    {
+        Object.Destroy(pair.Value);
     }
 }

@@ -58,7 +58,6 @@
   <ItemGroup>
     <Compile Include="Assets\Scripts\Weapon\BulletController.cs" />
     <Compile Include="Assets\Scripts\Weapon\WeaponConfig.cs" />
-    <Compile Include="Assets\Scripts\Weapon\BulletView.cs" />
     <Compile Include="Assets\Scripts\Weapon\BaseBulletHandler.cs" />
     <Compile Include="Assets\Scripts\Weapon\LaserModel.cs" />
     <Compile Include="Assets\Scripts\Weapon\WeaponInputsHandler.cs" />

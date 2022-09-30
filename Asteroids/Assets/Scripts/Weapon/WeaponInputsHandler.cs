@@ -1,19 +1,25 @@
 ﻿namespace Weapon
 {
-    public class WeaponInputsHandler
+    public class WeaponInputsHandler : IClearable
     {
         private IWeaponUseInputData _inputSystem;
         private BulletController _bulletController;
         private LaserController _laserController;
 
-        public WeaponInputsHandler(BulletController bulletController, LaserController laserController, IWeaponUseInputData iputs)
+        public WeaponInputsHandler(BulletController bulletController, LaserController laserController, IWeaponUseInputData inputs)
         {
             _bulletController = bulletController;
             _laserController = laserController;
 
-            _inputSystem = iputs;
-            _inputSystem.onGunUse.AddListener(OnDefaultGunUse);
-            _inputSystem.onLaserUse.AddListener(OnLaserGunUse);
+            _inputSystem = inputs;
+            _inputSystem.onGunUse += OnDefaultGunUse;
+            _inputSystem.onLaserUse += OnLaserGunUse;
+        }
+
+        void IClearable.Clear()
+        {
+            _inputSystem.onGunUse -= OnDefaultGunUse;
+            _inputSystem.onLaserUse -= OnLaserGunUse;
         }
 
         private void OnDefaultGunUse()

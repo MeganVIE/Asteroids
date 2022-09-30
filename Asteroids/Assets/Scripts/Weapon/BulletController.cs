@@ -13,7 +13,7 @@ namespace Weapon
         {
             _cameraData = cameraData;
             _transformHandler = new DirectedModelTransformHandler();
-            _bulletObjectPool = new ObjectPool<DestroyableDirectedModel, View>(_weaponConfig.ViewPrefab, ObjectType.Bullet,_weaponConfig.CollisionRadius);
+            _bulletObjectPool = new DestroyableObjectPool<DestroyableDirectedModel, View>(_weaponConfig.ViewPrefab, ObjectType.Bullet,_weaponConfig.CollisionRadius);
         }
 
         public override void Update()
@@ -25,7 +25,7 @@ namespace Weapon
             for (int i = 0; i < bulletModels.Length; i++)
             {
                 UpdateBulletPosition(bulletModels[i], out Vector2 newPosition);
-
+                
                 if (_cameraData.IsOutsideViewport(newPosition))
                     DeactivateBullet(bulletModels[i]);
             }
@@ -34,13 +34,13 @@ namespace Weapon
         protected override void ModelViewSettings(DestroyableDirectedModel model, View view)
         {
             base.ModelViewSettings(model, view);
-            model.OnDestroy.AddListener(DeactivateBullet);
+            model.OnDestroy += DeactivateBullet;
         }
 
         protected override void DeactivateBullet(DestroyableDirectedModel model)
         {
             base.DeactivateBullet(model);
-            model.OnDestroy.RemoveListener(DeactivateBullet);
+            model.OnDestroy -= DeactivateBullet;
         }
 
         private void UpdateBulletPosition(DestroyableDirectedModel model, out Vector2 newPosition)

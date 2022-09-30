@@ -4,7 +4,7 @@ using Ship;
 
 namespace Weapon
 {
-    public abstract class BaseBulletHandler<T1, T2> : IUpdatable where T1 : DirectedModel, new() where T2: View
+    public abstract class BaseBulletHandler<T1, T2> : IUpdatable, IClearable where T1 : DirectedModel, new() where T2: View
     {
         private CollisionHandler _collisionHandler;
 

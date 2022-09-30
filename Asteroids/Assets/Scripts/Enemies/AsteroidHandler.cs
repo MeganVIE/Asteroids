@@ -1,23 +1,22 @@
-﻿using UnityEngine.Events;
+﻿using System;
 
 namespace Enemies
 {
-    public class AsteroidHandler : IUpdatable
+    public class AsteroidHandler : IUpdatable, IClearable
     {
         private EnemySpawnController _smallAsteroidsController;
         private EnemyPeriodicSpawnController _bigAsteroidController;
         private SmallAsteroidConfig _smallConfig;
 
-        public UnityEvent<Enemy> OnEnemyDestroyed;
+        public Action<Enemy> OnEnemyDestroyed;
         public AsteroidHandler(BigAsteroidConfig bigConfig, SmallAsteroidConfig smallConfig, CollisionHandler collisionHandler, CameraData cameraData)
         {
             _smallConfig = smallConfig;
             _bigAsteroidController = new EnemyPeriodicSpawnController(bigConfig, collisionHandler, cameraData);
             _smallAsteroidsController = new EnemySpawnController(_smallConfig, collisionHandler, cameraData);
 
-            _bigAsteroidController.OnEnemyDestroyed.AddListener(OnBigAsteroidDestroyed);
-            _smallAsteroidsController.OnEnemyDestroyed.AddListener(OnAsteroidDestroyed);
-            OnEnemyDestroyed = new UnityEvent<Enemy>();
+            _bigAsteroidController.OnEnemyDestroyed += OnBigAsteroidDestroyed;
+            _smallAsteroidsController.OnEnemyDestroyed += OnAsteroidDestroyed;
         }
 
         void IUpdatable.Update()
@@ -25,11 +24,12 @@ namespace Enemies
             _bigAsteroidController.Update();
             _smallAsteroidsController.Update();
         }
-        void IUpdatable.Clear()
+        void IClearable.Clear()
         {
-            OnEnemyDestroyed.RemoveAllListeners();
             _bigAsteroidController.Clear();
             _smallAsteroidsController.Clear();
+            _bigAsteroidController.OnEnemyDestroyed -= OnBigAsteroidDestroyed;
+            _smallAsteroidsController.OnEnemyDestroyed -= OnAsteroidDestroyed;
         }
 
         private void OnBigAsteroidDestroyed(Enemy model)
