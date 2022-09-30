@@ -7,10 +7,12 @@ namespace Weapon
     public class BulletController : BaseBulletHandler<DestroyableDirectedModel, View>
     {
         private CameraData _cameraData;
+        private DirectedModelTransformHandler _transformHandler;
         public BulletController(WeaponConfig weaponConfig, ShipModel model, CollisionHandler collisionHandler, CameraData cameraData) :
             base(weaponConfig, model, collisionHandler)
         {
             _cameraData = cameraData;
+            _transformHandler = new DirectedModelTransformHandler();
             _bulletObjectPool = new ObjectPool<DestroyableDirectedModel, View>(_weaponConfig.ViewPrefab, ObjectType.Bullet,_weaponConfig.CollisionRadius);
         }
 
@@ -43,7 +45,7 @@ namespace Weapon
 
         private void UpdateBulletPosition(DestroyableDirectedModel model, out Vector2 newPosition)
         {
-            newPosition = model.Position + model.Direction * _weaponConfig.Speed * Time.deltaTime;
+            newPosition = _transformHandler.GetNewPosition(model, _weaponConfig.Speed);
             model.ChangePosition(newPosition);
             _bullets[model].ChangePosition(newPosition);
         }

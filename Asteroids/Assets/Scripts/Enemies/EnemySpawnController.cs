@@ -9,6 +9,7 @@ namespace Enemies
         protected CameraData _cameraData;
         protected ObjectPointsConfig _enemyConfig;
         private CollisionHandler _collisionHandler;
+        private DirectedModelTransformHandler _transformHandler;
 
         private ObjectPool<Enemy, View> _enemiesObjectPool;
         private Dictionary<Enemy, View> _enemies;
@@ -19,6 +20,7 @@ namespace Enemies
             _cameraData = cameraData;
             _collisionHandler = collisionHandler;
             _enemyConfig = config;
+            _transformHandler = new DirectedModelTransformHandler();
             _enemiesObjectPool = new ObjectPool<Enemy, View>(_enemyConfig.ViewPrefab, ObjectType.Enemy, _enemyConfig.CollisionRadius);
             _enemies = new Dictionary<Enemy, View>();
 
@@ -49,7 +51,7 @@ namespace Enemies
 
         protected virtual void UpdateModelViewData(Enemy model)
         {
-            var newPosition = model.Position + model.Direction * _enemyConfig.Speed * Time.deltaTime;
+            var newPosition = _transformHandler.GetNewPosition(model, _enemyConfig.Speed);
             newPosition = _cameraData.RepeatInViewport(newPosition);
 
             model.ChangePosition(newPosition);
