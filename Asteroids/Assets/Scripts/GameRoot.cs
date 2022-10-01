@@ -30,20 +30,17 @@ public class GameRoot : MonoBehaviour
 
     private List<IUpdatable> _updatables;
     private List<IClearable> _clearables;
+    private List<IRestartable> _restartables;
 
     private bool _isGameOver;
     private int _score;
+
     private void Start()
     {
-        _gameOverPanel.gameObject.SetActive(false);
-
         _cameraData = new CameraData(Camera.main);
-        _isGameOver = false;
-        _score = 0;
-
         var collisionHandler = new CollisionHandler();
+
         _shipController = new ShipController(_shipConfig, _inputSystem, collisionHandler, _cameraData);
-        _shipController.OnShipDestroy += GameOver;
         var shipModel = _shipController.GetShipModel();
 
         var bulletController = new BulletController(_weaponConfig, shipModel, collisionHandler, _cameraData);
@@ -51,9 +48,7 @@ public class GameRoot : MonoBehaviour
         _weaponInputsHandler = new WeaponInputsHandler(bulletController, _laserController, _inputSystem);
 
         _asteroidhandler = new AsteroidHandler(_bigAsteroidConfig, _smallAsteroidConfig, collisionHandler, _cameraData);
-        _asteroidhandler.OnEnemyDestroyed += AddPoints;
         _ufoController = new UfoController(_ufoConfig, collisionHandler, shipModel, _cameraData);
-        _ufoController.OnEnemyDestroyed += AddPoints;
 
         _updatables = new List<IUpdatable> { _shipController, 
                                              bulletController,
@@ -61,7 +56,8 @@ public class GameRoot : MonoBehaviour
                                              _laserController, 
                                              collisionHandler,
                                              _ufoController };
-        _clearables = new List<IClearable>{ _shipController,
+
+        _clearables = new List<IClearable> { _shipController,
                                              bulletController,
                                              _asteroidhandler,
                                              _laserController,
@@ -69,6 +65,26 @@ public class GameRoot : MonoBehaviour
                                              _ufoController,
                                             _weaponInputsHandler};
 
+        _restartables = new List<IRestartable> { _shipController,
+                                                  bulletController,
+                                                 _laserController,
+                                                 _asteroidhandler,
+                                                 _ufoController};
+        Restart();
+        _gameOverPanel.onRestartClick += Restart;
+        _shipController.OnShipDestroy += GameOver;
+        _asteroidhandler.OnEnemyDestroyed += AddPoints;
+        _ufoController.OnEnemyDestroyed += AddPoints;
+    }
+
+    private void Restart()
+    {
+        _gameOverPanel.gameObject.SetActive(false);
+        _isGameOver = false;
+        _score = 0;
+
+        foreach (var restartable in _restartables)
+            restartable.Restart();
     }
 
     private void Update()
@@ -76,10 +92,8 @@ public class GameRoot : MonoBehaviour
         if (_isGameOver || _updatables == null)
             return;
 
-        foreach (var controller in _updatables)
-        {
-            controller.Update();
-        }
+        foreach (var updatable in _updatables)
+            updatable.Update();
 
         _informationPanel.UpdateFields(_shipController.GetShipModel().Position, 
                                        _shipController.GetShipModel().Rotation,
@@ -93,10 +107,13 @@ public class GameRoot : MonoBehaviour
         if (_updatables == null)
             return;
 
-        foreach (var controller in _clearables)
-        {
-            controller.Clear();
-        }
+        foreach (var clearable in _clearables)
+            clearable.Clear();
+
+        _gameOverPanel.onRestartClick -= Restart;
+        _shipController.OnShipDestroy -= GameOver;
+        _asteroidhandler.OnEnemyDestroyed -= AddPoints;
+        _ufoController.OnEnemyDestroyed -= AddPoints;
     }
 
     private void AddPoints(Enemy model) => _score += model.Points;
@@ -105,9 +122,5 @@ public class GameRoot : MonoBehaviour
     {
         _isGameOver = true;
         _gameOverPanel.Show(_score);
-
-        _shipController.OnShipDestroy -= GameOver;
-        _asteroidhandler.OnEnemyDestroyed -= AddPoints;
-        _ufoController.OnEnemyDestroyed -= AddPoints;
     }
 }

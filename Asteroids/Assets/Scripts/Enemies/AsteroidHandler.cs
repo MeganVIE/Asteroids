@@ -2,7 +2,7 @@
 
 namespace Enemies
 {
-    public class AsteroidHandler : IUpdatable, IClearable
+    public class AsteroidHandler : IUpdatable, IClearable, IRestartable
     {
         private EnemySpawnController _smallAsteroidsController;
         private EnemyPeriodicSpawnController _bigAsteroidController;
@@ -30,6 +30,11 @@ namespace Enemies
             _smallAsteroidsController.Clear();
             _bigAsteroidController.OnEnemyDestroyed -= OnBigAsteroidDestroyed;
             _smallAsteroidsController.OnEnemyDestroyed -= OnAsteroidDestroyed;
+        }
+        void IRestartable.Restart()
+        {
+            _bigAsteroidController.Restart();
+            _smallAsteroidsController.Restart();
         }
 
         private void OnBigAsteroidDestroyed(Enemy model)

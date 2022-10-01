@@ -4,12 +4,14 @@ namespace Enemies
 {
     public class EnemyPeriodicSpawnController : EnemySpawnController
     {
+        private float _firstSpawnTime;
         private float _currentSpawnTime;
         private float _timer;
         public EnemyPeriodicSpawnController(EnemyPeriodicConfig config, CollisionHandler collisionHandler, CameraData cameraData) :
             base(config, collisionHandler, cameraData)
         {
-            _currentSpawnTime = config.FirstSpawnTime;
+            _firstSpawnTime = config.FirstSpawnTime;
+            _currentSpawnTime = _firstSpawnTime;
             _timer = 0;
         }
 
@@ -17,6 +19,12 @@ namespace Enemies
         {
             base.Update();
             Timer();
+        }
+        public override void Restart()
+        {
+            base.Restart();
+            _currentSpawnTime = _firstSpawnTime;
+            _timer = 0;
         }
 
         protected void Timer()

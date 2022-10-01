@@ -36,6 +36,13 @@ namespace Weapon
             base.Clear();
             _laserTimers.Clear();
         }
+        public override void Restart()
+        {
+            base.Restart();
+            _rechargeTimer = 0;
+            _lasersCurrentAmount = _weaponConfig.LaserMaxAmount;
+            _laserTimers.Clear();
+        }
 
         private void TimersUpdate()
         {

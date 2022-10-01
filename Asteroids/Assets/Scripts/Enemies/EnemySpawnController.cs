@@ -3,7 +3,7 @@ using UnityEngine;
 
 namespace Enemies
 {
-    public class EnemySpawnController: IUpdatable, IClearable
+    public class EnemySpawnController: IUpdatable, IClearable, IRestartable
     {
         protected CameraData _cameraData;
         protected ObjectPointsConfig _enemyConfig;
@@ -32,6 +32,15 @@ namespace Enemies
         {
             _enemies.Clear();
             _enemiesObjectPool.Clear();
+        }
+        public virtual void Restart()
+        {
+            foreach (var pair in _enemies)
+            {
+                _enemiesObjectPool.DeactivateModelViewPair(pair.Key, pair.Value);
+                _collisionHandler.RemoveCollision(pair.Key);
+            }
+            _enemies.Clear();
         }
 
         protected void UpdatePositions()
@@ -74,6 +83,9 @@ namespace Enemies
         private void DeactivateEnemy(DestroyableDirectedModel model)
         {
             var enemyModel = (Enemy)model;
+            if (!_enemies.ContainsKey(enemyModel))
+                return;
+
             _enemiesObjectPool.DeactivateModelViewPair(enemyModel, _enemies[enemyModel]);
             _enemies.Remove(enemyModel);
             _collisionHandler.RemoveCollision(model);

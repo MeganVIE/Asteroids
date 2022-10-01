@@ -12,5 +12,7 @@ namespace Ship
         public float SlowdownSpeed = 1f;
         public float RotationSpeed = 90;
         public Vector2 StartPosition = Vector2.zero;
+        public float StartRotation = 0;
+        public Vector2 StartAcceleration = Vector2.zero;
     }
 }

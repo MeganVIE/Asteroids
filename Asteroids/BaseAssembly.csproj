@@ -57,19 +57,20 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Assets\Scripts\Base\CollisionHandler.cs" />
+    <Compile Include="Assets\Scripts\Base\Enemy.cs" />
     <Compile Include="Assets\Scripts\Base\CollisionModel.cs" />
+    <Compile Include="Assets\Scripts\Base\IClearable.cs" />
     <Compile Include="Assets\Scripts\Base\IUpdatable.cs" />
+    <Compile Include="Assets\Scripts\Base\DestroyableObjectPool.cs" />
     <Compile Include="Assets\Scripts\Base\DirectedModelTransformHandler.cs" />
     <Compile Include="Assets\Scripts\Base\View.cs" />
     <Compile Include="Assets\Scripts\Base\SpawnObjectConfig.cs" />
     <Compile Include="Assets\Scripts\Base\DestroyableDirectedModel.cs" />
+    <Compile Include="Assets\Scripts\Base\IRestartable.cs" />
     <Compile Include="Assets\Scripts\Base\DirectedModel.cs" />
     <Compile Include="Assets\Scripts\Base\CameraData.cs" />
     <Compile Include="Assets\Scripts\Base\ObjectPointsConfig.cs" />
     <Compile Include="Assets\Scripts\Base\ObjectPool.cs" />
-    <Compile Include="Assets\Scripts\Base\IClearable.cs" />
-    <Compile Include="Assets\Scripts\Base\Enemy.cs" />
-    <Compile Include="Assets\Scripts\Base\DestroyableObjectPool.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="Assets\Scripts\Base\BaseAssembly.asmdef" />

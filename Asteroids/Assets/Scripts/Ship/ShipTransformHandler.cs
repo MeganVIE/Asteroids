@@ -2,7 +2,7 @@
 
 namespace Ship
 {
-    public class ShipTransformHandler
+    public class ShipTransformHandler : IRestartable
     {
         private CameraData _cameraData;
         private ShipConfig _shipConfigData;
@@ -39,6 +39,11 @@ namespace Ship
             newPosition = _cameraData.RepeatInViewport(newPosition);
 
             model.ChangePosition(newPosition);
+        }
+
+        public void Restart()
+        {
+            _acceleration = _shipConfigData.StartAcceleration;
         }
     }
 }

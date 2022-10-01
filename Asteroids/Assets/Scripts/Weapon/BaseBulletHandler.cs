@@ -4,7 +4,7 @@ using Ship;
 
 namespace Weapon
 {
-    public abstract class BaseBulletHandler<T1, T2> : IUpdatable, IClearable where T1 : DirectedModel, new() where T2: View
+    public abstract class BaseBulletHandler<T1, T2> : IUpdatable, IClearable, IRestartable where T1 : DirectedModel, new() where T2: View
     {
         private CollisionHandler _collisionHandler;
 
@@ -26,6 +26,16 @@ namespace Weapon
         public virtual void Clear()
         {
             _bulletObjectPool.Clear();
+            _bullets.Clear();
+        }
+
+        public virtual void Restart()
+        {
+            foreach (var pair in _bullets)
+            { 
+                _bulletObjectPool.DeactivateModelViewPair(pair.Key, pair.Value);
+                _collisionHandler.RemoveCollision(pair.Key);
+            }
             _bullets.Clear();
         }
 

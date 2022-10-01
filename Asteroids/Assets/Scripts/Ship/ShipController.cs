@@ -2,7 +2,7 @@ using UnityEngine;
 
 namespace Ship
 {
-    public class ShipController : IUpdatable, IClearable
+    public class ShipController : IUpdatable, IClearable, IRestartable
     {
         private IMoveRotateInputData _inputSystem;
 
@@ -10,26 +10,37 @@ namespace Ship
         private ShipView _view;
         private ShipTransformHandler _shipTransformHandler;
         private CollisionHandler _collisionHandler;
+        private ShipConfig _shipConfig;
 
         public System.Action OnShipDestroy { get; set; }
 
         public ShipController(ShipConfig shipConfig, IMoveRotateInputData inputs, CollisionHandler collisionHandler, CameraData cameraData)
         {
-            _shipTransformHandler = new ShipTransformHandler(shipConfig, cameraData);
-            _inputSystem = inputs;
+            _shipConfig = shipConfig;
+            _shipTransformHandler = new ShipTransformHandler(_shipConfig, cameraData);
+            _inputSystem = inputs;            
 
-            _model = new ShipModel(shipConfig.StartPosition, shipConfig.CollisionRadius);
-            _view = Object.Instantiate(shipConfig.ViewPrefab);
+            _model = new ShipModel(_shipConfig.StartPosition, _shipConfig.CollisionRadius);
+            _view = Object.Instantiate(_shipConfig.ViewPrefab);
             _collisionHandler = collisionHandler;
             _collisionHandler.AddCollision(_model);
 
-            _model.OnCollision += onShipCollision;
-
-            UpdatePosition();
-            UpdateRotation();
+            Restart();
         }
 
         public float GetCurrentSpeed() => _shipTransformHandler.CurrentSpeed;
+
+        public void Restart()
+        {
+            _model.ChangePosition(_shipConfig.StartPosition);
+            _model.ChangeRotation(_shipConfig.StartRotation);
+            _shipTransformHandler.Restart();
+
+            UpdatePosition();
+            UpdateRotation();
+
+            _model.OnCollision += onShipCollision;
+        }
 
         void IUpdatable.Update()
         {
@@ -43,6 +54,7 @@ namespace Ship
         void IClearable.Clear()
         {
             _model.OnCollision -= onShipCollision;
+            _collisionHandler.RemoveCollision(_model);
         }
 
         public ShipModel GetShipModel() => _model;
