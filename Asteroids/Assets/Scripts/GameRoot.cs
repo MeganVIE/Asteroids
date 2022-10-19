@@ -4,6 +4,7 @@ using UnityEngine;
 using Ship;
 using Weapon;
 using Enemies;
+using Panels;
 
 public class GameRoot : MonoBehaviour
 {
@@ -25,6 +26,8 @@ public class GameRoot : MonoBehaviour
 
     private AsteroidHandler _asteroidhandler;
     private UfoController _ufoController;
+
+    private PanelsController _panelsController;
 
     private CameraData _cameraData;
 
@@ -50,12 +53,20 @@ public class GameRoot : MonoBehaviour
         _asteroidhandler = new AsteroidHandler(_bigAsteroidConfig, _smallAsteroidConfig, collisionHandler, _cameraData);
         _ufoController = new UfoController(_ufoConfig, collisionHandler, shipModel, _cameraData);
 
+        _panelsController = new PanelsController(_informationPanel);
+        _shipController.OnCoordinatesChange += _panelsController.UpdateCoordinatesData;
+        _shipController.OnRotationChange += _panelsController.UpdateRotationData;
+        _shipController.OnSpeedChange += _panelsController.UpdateSpeedData;
+        _laserController.OnCurrentAmountChange += _panelsController.UpdateLaserAmountData;
+        _laserController.OnRechargeTimeChange += _panelsController.UpdateRechargeTimeData;
+
         _updatables = new List<IUpdatable> { _shipController, 
                                              bulletController,
                                              _asteroidhandler,
                                              _laserController, 
                                              collisionHandler,
-                                             _ufoController };
+                                             _ufoController,
+                                             _panelsController};
 
         _clearables = new List<IClearable> { _shipController,
                                              bulletController,
@@ -70,6 +81,7 @@ public class GameRoot : MonoBehaviour
                                                  _laserController,
                                                  _asteroidhandler,
                                                  _ufoController};
+
         Restart();
         _gameOverPanel.onRestartClick += Restart;
         _shipController.OnShipDestroy += GameOver;
@@ -94,12 +106,6 @@ public class GameRoot : MonoBehaviour
 
         foreach (var updatable in _updatables)
             updatable.Update();
-
-        _informationPanel.UpdateFields(_shipController.GetShipModel().Position, 
-                                       _shipController.GetShipModel().Rotation,
-                                       _shipController.GetCurrentSpeed(),
-                                       _laserController.CurrentAmount,
-                                       _laserController.RechargeTime);
     }
 
     private void OnDestroy()
@@ -114,6 +120,12 @@ public class GameRoot : MonoBehaviour
         _shipController.OnShipDestroy -= GameOver;
         _asteroidhandler.OnEnemyDestroyed -= AddPoints;
         _ufoController.OnEnemyDestroyed -= AddPoints;
+
+        _shipController.OnCoordinatesChange -= _panelsController.UpdateCoordinatesData;
+        _shipController.OnRotationChange -= _panelsController.UpdateRotationData;
+        _shipController.OnSpeedChange -= _panelsController.UpdateSpeedData;
+        _laserController.OnCurrentAmountChange -= _panelsController.UpdateLaserAmountData;
+        _laserController.OnRechargeTimeChange -= _panelsController.UpdateRechargeTimeData;
     }
 
     private void AddPoints(Enemy model) => _score += model.Points;

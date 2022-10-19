@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 using Ship;
+using System;
 
 namespace Weapon
 {
@@ -13,8 +14,9 @@ namespace Weapon
         private float _rechargeTimer;
 
         public bool CanCreateLaser => _lasersCurrentAmount > 0;
-        public byte CurrentAmount => _lasersCurrentAmount;
-        public float RechargeTime => _lasersCurrentAmount >= _weaponConfig.LaserMaxAmount ? 0 : _weaponConfig.LaserAmountRechargeTime - _rechargeTimer;
+
+        public Action<byte> OnCurrentAmountChange { get; set; }
+        public Action<float> OnRechargeTimeChange { get; set; }
 
         public LaserController(WeaponConfig weaponConfig, ShipModel model, CollisionHandler collisionHandler) :
             base(weaponConfig, model, collisionHandler)
@@ -44,6 +46,16 @@ namespace Weapon
             _laserTimers.Clear();
         }
 
+        protected override void ModelViewSettings(LaserModel model, LaserView view)
+        {
+            base.ModelViewSettings(model, view);
+
+            view.ChangeRotation(_model.Rotation);
+            view.SetLineView(model.CollisionRadius, model.Direction);
+            _laserTimers.Add(model, 0);
+            AmountChange(false);
+        }
+
         private void TimersUpdate()
         {
             if (_bullets.Count == 0)
@@ -66,19 +78,17 @@ namespace Weapon
             if (_rechargeTimer >= _weaponConfig.LaserAmountRechargeTime)
             {
                 _rechargeTimer = 0;
-                _lasersCurrentAmount++;
+                AmountChange(true);
             }
+            OnRechargeTimeChange?.Invoke(_rechargeTimer == 0 ? 0 : _weaponConfig.LaserAmountRechargeTime - _rechargeTimer);
         }
 
-        protected override void ModelViewSettings(LaserModel model, LaserView view)
+        private void AmountChange(bool increase)
         {
-            base.ModelViewSettings(model, view);
-
-            view.ChangeRotation(_model.Rotation);
-            view.SetLineView(model.CollisionRadius, model.Direction);
-            _laserTimers.Add(model, 0);
-            _lasersCurrentAmount--;
+            _lasersCurrentAmount += (byte)(increase ? 1 : -1);
+            OnCurrentAmountChange?.Invoke(_lasersCurrentAmount);
         }
+
         private void DeactivateLaser(LaserModel model)
         {
             base.DeactivateBullet(model);

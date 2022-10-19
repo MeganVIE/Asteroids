@@ -1,3 +1,4 @@
+using System;
 using UnityEngine;
 
 namespace Ship
@@ -12,7 +13,11 @@ namespace Ship
         private CollisionHandler _collisionHandler;
         private ShipConfig _shipConfig;
 
-        public System.Action OnShipDestroy { get; set; }
+        public Action OnShipDestroy { get; set; }
+
+        public Action<Vector2> OnCoordinatesChange { get; set; }
+        public Action<float> OnRotationChange { get; set; }
+        public Action<float> OnSpeedChange { get; set; }
 
         public ShipController(ShipConfig shipConfig, IMoveRotateInputData inputs, CollisionHandler collisionHandler, CameraData cameraData)
         {
@@ -21,14 +26,12 @@ namespace Ship
             _inputSystem = inputs;            
 
             _model = new ShipModel(_shipConfig.StartPosition, _shipConfig.CollisionRadius);
-            _view = Object.Instantiate(_shipConfig.ViewPrefab);
+            _view = UnityEngine.Object.Instantiate(_shipConfig.ViewPrefab);
             _collisionHandler = collisionHandler;
             _collisionHandler.AddCollision(_model);
 
             Restart();
         }
-
-        public float GetCurrentSpeed() => _shipTransformHandler.CurrentSpeed;
 
         public void Restart()
         {
@@ -70,17 +73,23 @@ namespace Ship
                 _shipTransformHandler.IncreaseAcceleration(_model.Rotation, Time.deltaTime);
             else
                 _shipTransformHandler.DecreaseAcceleration(Time.deltaTime);
+
+            OnSpeedChange?.Invoke(_shipTransformHandler.CurrentSpeed);
         }
         private void UpdatePosition()
         {
             _shipTransformHandler.ChangePosition(_model);
             _view.ChangePosition(_model.Position);
+
+            OnCoordinatesChange?.Invoke(_model.Position);
         }
 
         private void UpdateRotation()
         {
             _shipTransformHandler.ChangeRotation(_model, _inputSystem.RotationValue, Time.deltaTime);
             _view.ChangeRotation(_model.Rotation);
+
+            OnRotationChange?.Invoke(_model.Rotation);
         }
     }
 }
