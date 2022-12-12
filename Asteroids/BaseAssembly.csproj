@@ -53,7 +53,7 @@
     <UnityVersion>2021.3.3f1</UnityVersion>
   </PropertyGroup>
   <ItemGroup>
-    <Analyzer Include="C:\Program Files (x86)\Microsoft Visual Studio Tools for Unity\16.0\Analyzers\Microsoft.Unity.Analyzers.dll" />
+    <Analyzer Include="C:\Program Files (x86)\Microsoft Visual Studio\2019\Community\Common7\IDE\Extensions\Microsoft\Visual Studio Tools for Unity\Analyzers\Microsoft.Unity.Analyzers.dll" />
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Assets\Scripts\Base\CollisionHandler.cs" />
@@ -66,10 +66,12 @@
     <Compile Include="Assets\Scripts\Base\View.cs" />
     <Compile Include="Assets\Scripts\Base\SpawnObjectConfig.cs" />
     <Compile Include="Assets\Scripts\Base\DestroyableDirectedModel.cs" />
+    <Compile Include="Assets\Scripts\Base\ScoreData.cs" />
     <Compile Include="Assets\Scripts\Base\IRestartable.cs" />
     <Compile Include="Assets\Scripts\Base\DirectedModel.cs" />
     <Compile Include="Assets\Scripts\Base\CameraData.cs" />
     <Compile Include="Assets\Scripts\Base\ObjectPointsConfig.cs" />
+    <Compile Include="Assets\Scripts\Base\Spawner.cs" />
     <Compile Include="Assets\Scripts\Base\ObjectPool.cs" />
   </ItemGroup>
   <ItemGroup>
@@ -321,12 +323,6 @@
     </Reference>
     <Reference Include="UnityEditor.Graphs">
       <HintPath>C:\Program Files\Unity\Hub\Editor\2021.3.3f1\Editor\Data\Managed\UnityEditor.Graphs.dll</HintPath>
-    </Reference>
-    <Reference Include="UnityEditor.WebGL.Extensions">
-      <HintPath>C:\Program Files\Unity\Hub\Editor\2021.3.3f1\Editor\Data\PlaybackEngines\WebGLSupport\UnityEditor.WebGL.Extensions.dll</HintPath>
-    </Reference>
-    <Reference Include="UnityEditor.OSXStandalone.Extensions">
-      <HintPath>C:\Program Files\Unity\Hub\Editor\2021.3.3f1\Editor\Data\PlaybackEngines\MacStandaloneSupport\UnityEditor.OSXStandalone.Extensions.dll</HintPath>
     </Reference>
     <Reference Include="UnityEditor.WindowsStandalone.Extensions">
       <HintPath>C:\Program Files\Unity\Hub\Editor\2021.3.3f1\Editor\Data\PlaybackEngines\WindowsStandaloneSupport\UnityEditor.WindowsStandalone.Extensions.dll</HintPath>

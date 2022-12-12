@@ -14,6 +14,7 @@ namespace Weapon
         private float _rechargeTimer;
 
         public bool CanCreateLaser => _lasersCurrentAmount > 0;
+        public byte LasersAmount => _lasersCurrentAmount;
 
         public Action<byte> OnCurrentAmountChange { get; set; }
         public Action<float> OnRechargeTimeChange { get; set; }
@@ -24,8 +25,7 @@ namespace Weapon
             _bulletObjectPool = new ObjectPool<LaserModel, LaserView>(_weaponConfig.LaserViewPrefab, ObjectType.Laser, _weaponConfig.LaserCollisionRadius);
             _laserTimers = new Dictionary<LaserModel, float>();
 
-            _rechargeTimer = 0;
-            _lasersCurrentAmount = _weaponConfig.LaserMaxAmount;
+            Restart();
         }
 
         public override void Update()

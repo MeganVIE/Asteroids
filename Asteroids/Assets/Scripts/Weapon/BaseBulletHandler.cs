@@ -57,6 +57,9 @@ namespace Weapon
 
         protected virtual void DeactivateBullet(T1 model)
         {
+            if (!_bullets.ContainsKey(model))
+                return;
+
             _bulletObjectPool.DeactivateModelViewPair(model, _bullets[model]);
             _bullets.Remove(model);
             _collisionHandler.RemoveCollision(model);

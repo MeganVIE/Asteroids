@@ -36,7 +36,7 @@ public class GameRoot : MonoBehaviour
     private List<IRestartable> _restartables;
 
     private bool _isGameOver;
-    private int _score;
+    private ScoreData _scoreData;
 
     private void Start()
     {
@@ -59,6 +59,9 @@ public class GameRoot : MonoBehaviour
         _shipController.OnSpeedChange += _panelsController.UpdateSpeedData;
         _laserController.OnCurrentAmountChange += _panelsController.UpdateLaserAmountData;
         _laserController.OnRechargeTimeChange += _panelsController.UpdateRechargeTimeData;
+        _panelsController.UpdateLaserAmountData(_laserController.LasersAmount);
+
+        _scoreData = new ScoreData();
 
         _updatables = new List<IUpdatable> { _shipController, 
                                              bulletController,
@@ -93,7 +96,7 @@ public class GameRoot : MonoBehaviour
     {
         _gameOverPanel.gameObject.SetActive(false);
         _isGameOver = false;
-        _score = 0;
+        _scoreData.Clear();
 
         foreach (var restartable in _restartables)
             restartable.Restart();
@@ -128,11 +131,11 @@ public class GameRoot : MonoBehaviour
         _laserController.OnRechargeTimeChange -= _panelsController.UpdateRechargeTimeData;
     }
 
-    private void AddPoints(Enemy model) => _score += model.Points;
+    private void AddPoints(Enemy model) => _scoreData.Increase(model.Points);
     
     private void GameOver()
     {
         _isGameOver = true;
-        _gameOverPanel.Show(_score);
+        _gameOverPanel.Show(_scoreData.Value);
     }
 }
