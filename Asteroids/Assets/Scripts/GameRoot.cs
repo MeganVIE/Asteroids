@@ -53,13 +53,12 @@ public class GameRoot : MonoBehaviour
         _asteroidhandler = new AsteroidHandler(_bigAsteroidConfig, _smallAsteroidConfig, collisionHandler, _cameraData);
         _ufoController = new UfoController(_ufoConfig, collisionHandler, shipModel, _cameraData);
 
-        _panelsController = new PanelsController(_informationPanel);
+        _panelsController = new PanelsController(_informationPanel, _gameOverPanel);
         _shipController.OnCoordinatesChange += _panelsController.UpdateCoordinatesData;
         _shipController.OnRotationChange += _panelsController.UpdateRotationData;
         _shipController.OnSpeedChange += _panelsController.UpdateSpeedData;
         _laserController.OnCurrentAmountChange += _panelsController.UpdateLaserAmountData;
         _laserController.OnRechargeTimeChange += _panelsController.UpdateRechargeTimeData;
-        _panelsController.UpdateLaserAmountData(_laserController.LasersAmount);
 
         _scoreData = new ScoreData();
 
@@ -83,10 +82,11 @@ public class GameRoot : MonoBehaviour
                                                   bulletController,
                                                  _laserController,
                                                  _asteroidhandler,
-                                                 _ufoController};
+                                                 _ufoController,
+                                                 _panelsController};
 
         Restart();
-        _gameOverPanel.onRestartClick += Restart;
+        _panelsController.SubscribeToRestart(Restart);
         _shipController.OnShipDestroy += GameOver;
         _asteroidhandler.OnEnemyDestroyed += AddPoints;
         _ufoController.OnEnemyDestroyed += AddPoints;
@@ -94,12 +94,13 @@ public class GameRoot : MonoBehaviour
 
     private void Restart()
     {
-        _gameOverPanel.gameObject.SetActive(false);
         _isGameOver = false;
         _scoreData.Clear();
 
         foreach (var restartable in _restartables)
             restartable.Restart();
+
+        _panelsController.UpdateLaserAmountData(_laserController.LasersAmount);
     }
 
     private void Update()
@@ -119,7 +120,7 @@ public class GameRoot : MonoBehaviour
         foreach (var clearable in _clearables)
             clearable.Clear();
 
-        _gameOverPanel.onRestartClick -= Restart;
+        _panelsController.UnsubscribeToRestart(Restart);
         _shipController.OnShipDestroy -= GameOver;
         _asteroidhandler.OnEnemyDestroyed -= AddPoints;
         _ufoController.OnEnemyDestroyed -= AddPoints;
@@ -136,6 +137,6 @@ public class GameRoot : MonoBehaviour
     private void GameOver()
     {
         _isGameOver = true;
-        _gameOverPanel.Show(_scoreData.Value);
+        _panelsController.ShowGameOverPanel(_scoreData.Value);
     }
 }
