@@ -22,6 +22,7 @@ public class GameRoot : MonoBehaviour
 
     private ShipController _shipController;
     private LaserController _laserController;
+    private BulletController _bulletController;
     private WeaponInputsHandler _weaponInputsHandler;
 
     private AsteroidHandler _asteroidhandler;
@@ -42,28 +43,12 @@ public class GameRoot : MonoBehaviour
     {
         _cameraData = new CameraData(Camera.main);
         var collisionHandler = new CollisionHandler();
-
-        _shipController = new ShipController(_shipConfig, _inputSystem, collisionHandler, _cameraData);
-        var shipModel = _shipController.GetShipModel();
-
-        var bulletController = new BulletController(_weaponConfig, shipModel, collisionHandler, _cameraData);
-        _laserController = new LaserController(_weaponConfig, shipModel, collisionHandler);
-        _weaponInputsHandler = new WeaponInputsHandler(bulletController, _laserController, _inputSystem);
-
-        _asteroidhandler = new AsteroidHandler(_bigAsteroidConfig, _smallAsteroidConfig, collisionHandler, _cameraData);
-        _ufoController = new UfoController(_ufoConfig, collisionHandler, shipModel, _cameraData);
-
-        _panelsController = new PanelsController(_informationPanel, _gameOverPanel);
-        _shipController.OnCoordinatesChange += _panelsController.UpdateCoordinatesData;
-        _shipController.OnRotationChange += _panelsController.UpdateRotationData;
-        _shipController.OnSpeedChange += _panelsController.UpdateSpeedData;
-        _laserController.OnCurrentAmountChange += _panelsController.UpdateLaserAmountData;
-        _laserController.OnRechargeTimeChange += _panelsController.UpdateRechargeTimeData;
+        ControllersInits(collisionHandler);
 
         _scoreData = new ScoreData();
 
         _updatables = new List<IUpdatable> { _shipController, 
-                                             bulletController,
+                                             _bulletController,
                                              _asteroidhandler,
                                              _laserController, 
                                              collisionHandler,
@@ -71,7 +56,7 @@ public class GameRoot : MonoBehaviour
                                              _panelsController};
 
         _clearables = new List<IClearable> { _shipController,
-                                             bulletController,
+                                             _bulletController,
                                              _asteroidhandler,
                                              _laserController,
                                              collisionHandler,
@@ -79,17 +64,56 @@ public class GameRoot : MonoBehaviour
                                             _weaponInputsHandler};
 
         _restartables = new List<IRestartable> { _shipController,
-                                                  bulletController,
+                                                  _bulletController,
                                                  _laserController,
                                                  _asteroidhandler,
                                                  _ufoController,
                                                  _panelsController};
 
         Restart();
+        Subscribes();
+    }
+
+    private void ControllersInits(CollisionHandler collisionHandler)
+    {
+        _shipController = new ShipController(_shipConfig, _inputSystem, collisionHandler, _cameraData);
+        var shipModel = _shipController.GetShipModel();
+
+        _bulletController = new BulletController(_weaponConfig, shipModel, collisionHandler, _cameraData);
+        _laserController = new LaserController(_weaponConfig, shipModel, collisionHandler);
+        _weaponInputsHandler = new WeaponInputsHandler(_bulletController, _laserController, _inputSystem);
+
+        _asteroidhandler = new AsteroidHandler(_bigAsteroidConfig, _smallAsteroidConfig, collisionHandler, _cameraData);
+        _ufoController = new UfoController(_ufoConfig, collisionHandler, shipModel, _cameraData);
+
+        _panelsController = new PanelsController(_informationPanel, _gameOverPanel);
+    }
+
+    private void Subscribes()
+    {
         _panelsController.SubscribeToRestart(Restart);
         _shipController.OnShipDestroy += GameOver;
         _asteroidhandler.OnEnemyDestroyed += AddPoints;
         _ufoController.OnEnemyDestroyed += AddPoints;
+
+        _shipController.OnCoordinatesChange += _panelsController.UpdateCoordinatesData;
+        _shipController.OnRotationChange += _panelsController.UpdateRotationData;
+        _shipController.OnSpeedChange += _panelsController.UpdateSpeedData;
+        _laserController.OnCurrentAmountChange += _panelsController.UpdateLaserAmountData;
+        _laserController.OnRechargeTimeChange += _panelsController.UpdateRechargeTimeData;
+    }
+    private void Unsubscribes()
+    {
+        _panelsController.UnsubscribeToRestart(Restart);
+        _shipController.OnShipDestroy -= GameOver;
+        _asteroidhandler.OnEnemyDestroyed -= AddPoints;
+        _ufoController.OnEnemyDestroyed -= AddPoints;
+
+        _shipController.OnCoordinatesChange -= _panelsController.UpdateCoordinatesData;
+        _shipController.OnRotationChange -= _panelsController.UpdateRotationData;
+        _shipController.OnSpeedChange -= _panelsController.UpdateSpeedData;
+        _laserController.OnCurrentAmountChange -= _panelsController.UpdateLaserAmountData;
+        _laserController.OnRechargeTimeChange -= _panelsController.UpdateRechargeTimeData;
     }
 
     private void Restart()
@@ -120,16 +144,7 @@ public class GameRoot : MonoBehaviour
         foreach (var clearable in _clearables)
             clearable.Clear();
 
-        _panelsController.UnsubscribeToRestart(Restart);
-        _shipController.OnShipDestroy -= GameOver;
-        _asteroidhandler.OnEnemyDestroyed -= AddPoints;
-        _ufoController.OnEnemyDestroyed -= AddPoints;
-
-        _shipController.OnCoordinatesChange -= _panelsController.UpdateCoordinatesData;
-        _shipController.OnRotationChange -= _panelsController.UpdateRotationData;
-        _shipController.OnSpeedChange -= _panelsController.UpdateSpeedData;
-        _laserController.OnCurrentAmountChange -= _panelsController.UpdateLaserAmountData;
-        _laserController.OnRechargeTimeChange -= _panelsController.UpdateRechargeTimeData;
+        Unsubscribes();
     }
 
     private void AddPoints(Enemy model) => _scoreData.Increase(model.Points);
